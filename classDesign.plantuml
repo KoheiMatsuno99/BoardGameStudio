@@ -1,0 +1,33 @@
+@startuml classDesign
+class PlayerInfo{
+    DBのテーブルとして使用
+    {field} - int player_id
+    {field} - String name
+    {field} - String password
+    {field} - int count_of_play
+    {field} - int count_of_win
+    {field} - int count_of_lose
+    {field} - int count_of_offline_play
+    {field} - int count_of_online_play
+}
+
+class Player{
+    {field} - int player_id
+    {field} - String name
+    {field} - Piece[] pieces // 自分が持っている駒
+    {field} - Piece[] picked_pieces //相手から奪った駒
+}
+
+class Piece{
+    {field} - String type
+    {field} - int[] position
+    {method} + String getType()
+    {method} + int[] getPosition()
+}
+
+class Table{
+    {field} - Player[] players
+
+}
+
+@enduml
