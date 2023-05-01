@@ -2,22 +2,22 @@
 ガイスターというボードゲームを開発します。
 ガイスターは1対1で対戦するボードゲームです。
 
-## Rules
+# Rules
 
-### Preparation
+## Preparation
 - ガイスターには青いオバケと赤いオバケの二つのコマがあります。
 - 各プレイヤーは、青いオバケと赤いオバケのコマをそれぞれ4つずつ持っています。
 - 各プレイヤーは手前の8マスに8つの自分のコマを自由に配置します。
 - 各プレイヤーは自分のコマが青いオバケと赤いオバケかは見えますが、相手のコマが青いオバケか赤いオバケかは見えません。
 
-### Game
+## Game
 - 各プレイヤーは交互に自分のコマを縦・横・斜めに1マスずつ進めます。
 - 進めた先に相手のコマがある場合は、そのコマを取らなければなりません。
 - 相手のコマを取った時、そのコマが青いオバケなのか赤いオバケなのかを知ることができます。
 - 各プレイヤーから見て相手側の一番奥のマスは脱出マスとなっています。
 - 自分のコマが脱出マスに到達し、その次のターンで相手に取られなければ、そのコマをボードから脱出させることができます。
 
-### Game set
+## Game set
 - 勝利条件は以下の3つです。
     - 相手の青いオバケを4つ全て取る。
     - 自分の赤いオバケを4つ全て取らせる。
@@ -38,14 +38,14 @@
 # Technology Stack
 使用技術は以下の通り
 - Frontend 
- - TypeScript
+    - TypeScript
 - Backend
- - Python
- - Django
+    - Python
+    - Django
 - Test
- - pytest
+    - pytest
 - CI/CD
- - GitHub Actions
+    - GitHub Actions
 
 ## Why are these technology ?
 
@@ -64,4 +64,9 @@ Djangoを選定したのは使ってみたかったから。
 
 # Architecture
 
-MVCモデルを採用# BoardGameStudio
+MVCモデルを採用
+
+# Design
+
+## Activity Diagram
+![image](https://user-images.githubusercontent.com/83019007/235469551-2ba459c8-00cc-4ece-8591-fe4b082ab525.png)
