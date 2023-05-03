@@ -1,6 +1,6 @@
 @startuml classDesign
 class PlayerInfo{
-    DBのテーブルとして使用
+    //DBのテーブルとして使用
     {field} - int player_id
     {field} - String name
     {field} - String password
@@ -15,38 +15,36 @@ class Player{
     {field} - int player_id
     {field} - String name
     {field} - Piece[] pieces // 自分が持っている駒
-    {field} - Piece[] picked_red_pieces //相手から奪った赤駒
-    {field} - Piece[] picked_blue_pieces //相手から奪った青駒
+    {field} - int picked_red_pieces_count //相手から奪った赤駒
+    {field} - int picked_blue_pieces_count //相手から奪った青駒
     {method} + void pick() // moveによって相手の駒と重なったら奪う
-    {method} + void move(Piece piece) // move内でsetPositionを呼び出す
+    {method} + void move(Piece piece, Block destination) //どのコマをどのマスに移動させるか
 }
 
 class Piece{
     {field} - String owner 
     {field} - String type //red or blue
-    {field} - int[] position //駒のxy座標を決定する
     {method} + String getOwner()
     {method} + void setOwner()
     {method} + String getType()
-    {method} + int[] getPosition()
-    {method} + void setPosition(int x, int y)
 }
 
 class Table{
     {field} - Player[] players
-    {field} - Block[] table
+    {field} - Block[][] table
     {method} + void play() //ゲームの進行を行うメソッド
+    {method} + String judgeGameResult() //ゲームの最終的な勝敗を決定するメソッド
 }
 
 class Block{
-    {field} int[] address //xy座標（不変）
-    {field} Piece piece //どの駒が配置されているか/null許可
-    {field} void setPiece(Piece piece)
-    {field} Piece getPiece()
+    {field} - int[] address //xy座標（不変）
+    {field} - Piece piece //どの駒が配置されているか/null許可
+    {field} + void setPiece(Piece piece)
+    {field} + Piece getPiece()
 }
 
 Piece "1..8" o-- "1" Player
-Block o-- Table
-
+Block "64" o-- "1" Table
+Player "2" o-- "1" Table
 
 @enduml
