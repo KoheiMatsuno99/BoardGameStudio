@@ -47,16 +47,10 @@ class Player:
     def __init__(self, name: str) -> None:
         self.name = name
         # todo もっと良い書き方があれば修正する
-        self.pieces: list[Piece] = [
-            Piece(name, "blue"),
-            Piece(name, "blue"),
-            Piece(name, "blue"),
-            Piece(name, "blue"),
-            Piece(name, "red"),
-            Piece(name, "red"),
-            Piece(name, "red"),
-            Piece(name, "red"),
-        ]
+        self.pieces: dict[str, Piece] = {
+            f'{self.name}_blue_{i}': Piece(self.name, "blue") for i in range(4) 
+        }
+        self.pieces.update({f'{self.name}_red_{i}': Piece(self.name, "red") for i in range(4)})
 
     def get_name(self) -> str:
         return self.name
@@ -88,7 +82,7 @@ class Table:
     def _pick(self, player: Player, destination: Block) -> None:
         target: Piece = destination.get_piece()
         # todo destinationにある駒(target)を相手のpiecesから削除 
-        # do something
+        
         target.set_position_None()
         player.add_picked_pieces_count(target)
         # 相手の青いオバケのコマを全て取ったら勝ち
