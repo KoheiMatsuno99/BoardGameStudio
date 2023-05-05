@@ -1,0 +1,2 @@
+Python 3.9.6
+Django 4.2.1
