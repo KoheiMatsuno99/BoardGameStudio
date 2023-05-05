@@ -1,9 +1,14 @@
 @startuml classDesign
 class PlayerInfo{
-    //DBのテーブルとして使用
+    DBのテーブルとして使用
     {field} - int player_id
     {field} - String name
     {field} - String password
+}
+
+class PlayerStats{
+    DBのテーブルとして使用
+    {field} - int player_id
     {field} - int count_of_play
     {field} - int count_of_win
     {field} - int count_of_lose
@@ -11,27 +16,40 @@ class PlayerInfo{
     {field} - int count_of_online_play
 }
 
+
 class Player{
     {field} - int player_id
     {field} - String name
-    {field} - Piece[] pieces // 自分が持っている駒
+    {field} + Map<String key, Piece piece> pieces // 自分が持っている駒
     {field} - int picked_red_pieces_count //相手から奪った赤駒
     {field} - int picked_blue_pieces_count //相手から奪った青駒
-    {method} + void pick() // moveによって相手の駒と重なったら奪う
-    {method} + void move(Piece piece, Block destination) //どのコマをどのマスに移動させるか
+    {method} + String getName()
+    {method} + int getPickedRedPiecesCount()
+    {method} + int getPickedBluePiecesCount()
+    {method} + addPickedPiecesCount(Piece piece)
 }
 
 class Piece{
     {field} - String owner 
     {field} - String type //red or blue
+    {field} - Integer[] position
     {method} + String getOwner()
     {method} + void setOwner()
     {method} + String getType()
+    {method} + Integer[] getPosition()
+    {method} + void setPosition()
 }
 
 class Table{
     {field} - Player[] players
     {field} - Block[][] table
+    {field} - String winner
+    {method} + Player[] getPlayers()
+    {method} + Block[][] getTable()
+    {method} + String getWinner()
+    {method} - void pick(Player player, Block destination)
+    {method} + void move(Player player, Piece playerPiece, Block destination)
+    {method} - boolean isMovable(Piece piece, Block destination)
     {method} + void play() //ゲームの進行を行うメソッド
     {method} + String judgeGameResult() //ゲームの最終的な勝敗を決定するメソッド
 }
@@ -39,8 +57,9 @@ class Table{
 class Block{
     {field} - int[] address //xy座標（不変）
     {field} - Piece piece //どの駒が配置されているか/null許可
-    {field} + void setPiece(Piece piece)
-    {field} + Piece getPiece()
+    {method} + void setPiece(Piece piece)
+    {method} + Piece getPiece()
+    {method} + boolean isEscapeBlock()
 }
 
 Piece "1..8" o-- "1" Player
