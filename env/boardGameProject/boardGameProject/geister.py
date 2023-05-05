@@ -70,10 +70,14 @@ class Player:
     
 class Table:
     def __init__(self, players: list[Player]) -> None:
-        self.players = players
-        self.table: list[list[Block]] = [[Block([x, y]) for y in range(8)] for x in range(8)]
+        self.__players = players
+        self.__table: list[list[Block]] = [[Block([x, y]) for y in range(8)] for x in range(8)]
         self.__winner: str = ""
 
+    def get_players(self) -> list[Player]:
+        return self.__players
+    def get_table(self) -> list[list[Block]]:
+        return self.__table
     def get_winner(self) -> str:
         return self.__winner 
     # 相手の駒を奪うメソッド
@@ -81,7 +85,7 @@ class Table:
     def _pick(self, player: Player, destination: Block) -> None:
         target: Piece = destination.get_piece()
         # todo destinationにある駒(target)を相手のpiecesから削除 
-        opponent: Player = [p for p in self.players if p.get_name() != player.get_name()][0]
+        opponent: Player = [p for p in self.__players if p.get_name() != player.get_name()][0]
         for key, piece in opponent.pieces.items():
             if piece == target:
                 opponent.pieces.pop(key)
