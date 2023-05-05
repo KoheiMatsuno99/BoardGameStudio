@@ -46,7 +46,6 @@ class Player:
     # idはプレイヤーの戦績を管理するPlayerInfoクラスからとってくる 
     def __init__(self, name: str) -> None:
         self.name = name
-        # todo もっと良い書き方があれば修正する
         self.pieces: dict[str, Piece] = {
             f'{self.name}_blue_{i}': Piece(self.name, "blue") for i in range(4) 
         }
