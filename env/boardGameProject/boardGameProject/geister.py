@@ -121,8 +121,8 @@ class Table:
         y_diff: int = abs(current_position[1] - destination_position[1])
         if x_diff > 1 and y_diff > 1:
             return False
-        # 移動しないという選択肢はなし(脱出マスは例外)
-        if x_diff == 0 and y_diff == 0 and not destination.is_escape_block():
+        # 移動しないという選択肢はなし(青いオバケが脱出する場合は例外)
+        if x_diff == 0 and y_diff == 0 and not (destination.is_escape_block() and piece.get_type() == "blue"):
             return False
         # destinationに自分のコマがある場合は移動不可
         if piece.get_owner() == destination.get_piece().get_owner():
