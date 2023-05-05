@@ -81,7 +81,11 @@ class Table:
     def _pick(self, player: Player, destination: Block) -> None:
         target: Piece = destination.get_piece()
         # todo destinationにある駒(target)を相手のpiecesから削除 
-        
+        opponent: Player = [p for p in self.players if p.get_name() != player.get_name()][0]
+        for key, piece in opponent.pieces.items():
+            if piece == target:
+                opponent.pieces.pop(key)
+                break
         target.set_position_None()
         player.add_picked_pieces_count(target)
         # 相手の青いオバケのコマを全て取ったら勝ち
@@ -89,8 +93,7 @@ class Table:
             self.__winner = player.get_name()
         # 相手の赤いオバケのコマを全て取ったら負け（相手の勝ち）
         elif player.get_picked_red_pieces_count == 4:
-            player_index: int = self.players.find(player)
-            self.__winner = self.players[1] if player_index == 0 else self.players[0]
+            self.__winner = opponent.get_name()
 
     # 自分のコマを動かすメソッド
     def move(self, player: Player, player_piece: Piece, destination: Block) -> None:
