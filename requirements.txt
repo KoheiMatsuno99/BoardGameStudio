@@ -1,2 +1,8 @@
 Python 3.9.6
 Django 4.2.1
+
+pip install django 
+pip install djangorestframework
+
+npx create-react-app frontend --template typescript
+npm install axios
