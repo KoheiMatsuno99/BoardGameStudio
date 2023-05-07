@@ -1,3 +1,6 @@
+import random
+
+
 class Piece:
     def __init__(self, OWNER: str, TYPE: str) -> None:
         self.__owner = OWNER
@@ -80,6 +83,26 @@ class Table:
         return self.__table
     def get_winner(self) -> str:
         return self.__winner 
+    # 各プレイヤーがコマの初期位置を決定するメソッド
+    def initialize_pieces_position(self) -> None:
+        for i in range(self.__players):
+            # 仮置き 今は全てのプレイヤーのコマをランダムに配置する
+            # オフラインモード時のCPUは初期位置をランダムに決定
+            # todo プレイヤーは手動で初期位置を決定するようにする
+            # todo オンラインモードでは二人のプレイヤーがそれぞれ手動で初期位置を決定する
+            # todo 各プレイヤーの初期位置設定は非同期処理で行い、一方のプレイヤーが相手の配置完了まで待たないようにする
+            for piece in self.__players[i].pieces.values():
+                # 各コマは同じ位置には置けない
+                # [0, 0]から[7, 1]までの範囲でランダムに決定
+                # 8個のコマを全て置くまでループ
+                while True:
+                    x: int = random.randint(0, 7)
+                    y: int = random.randint(0, 1) if i == 1 else random.randint(6, 7)
+                    if self.__table[x][y].get_piece() is None:
+                        self.__table[x][y].set_piece(piece)
+                        piece.set_position([x, y])
+                        break
+        
     # 相手の駒を奪うメソッド
     # destinationに相手の駒がある時に呼び出す
     def _pick(self, player: Player, destination: Block) -> None:
