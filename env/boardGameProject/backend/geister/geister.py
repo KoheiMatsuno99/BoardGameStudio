@@ -173,10 +173,7 @@ class Table:
                 return
         # 移動先に相手のコマがあれば奪う
         target: Optional[Piece] = destination.get_piece()
-        if (
-            target is not None
-            and target.get_owner() != player_piece.get_owner()
-        ):
+        if target is not None and target.get_owner() != player_piece.get_owner():
             self._pick(player, destination)
         # 移動元のブロックからコマを削除
         curent_position: Optional[list[int]] = player_piece.get_position()
