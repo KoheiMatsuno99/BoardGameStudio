@@ -102,7 +102,9 @@ class Table:
                         self.__table[x][y].set_piece(piece)
                         piece.set_position([x, y])
                         break
-        
+    def get_piece_at(self, position: list[int]) -> Piece or None:
+        return self.__table[position[0]][position[1]].get_piece()
+
     # 相手の駒を奪うメソッド
     # destinationに相手の駒がある時に呼び出す
     def _pick(self, player: Player, destination: Block) -> None:
@@ -133,8 +135,13 @@ class Table:
                 return 
         if destination.get_piece is not None and destination.get_piece().get_owner() != player_piece.get_owner():
             self._pick(player, destination)
-        player_piece.set_position(destination.get_address())
-        destination.set_piece(player_piece)
+        # 移動元のブロックからコマを削除
+        curent_position: list[int] = player_piece.get_position()
+        self.__table[curent_position[0]][curent_position[1]].set_piece(None)
+        # 移動先のブロックにコマを配置
+        destination_position: list[int] = destination.get_address()
+        player_piece.set_position(destination_position)
+        self.__table[destination_position[0]][destination_position[1]].set_piece(player_piece)
     
     def _is_movable(self, piece: Piece, destination: Block) -> bool:
         # 現在位置の上下左右1マスより離れていたら移動不可
