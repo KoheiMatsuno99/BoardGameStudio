@@ -1,6 +1,4 @@
 import random
-
-
 class Piece:
     def __init__(self, OWNER: str, TYPE: str) -> None:
         self.__owner = OWNER
@@ -15,14 +13,11 @@ class Piece:
     def get_type(self) -> str:
         return self.__type
     # Pieceのtypeは不変なのでsetterは定義しない
-    def get_position(self) -> list[int]:
-        # None制御
-        assert type(self.__position) == list[int], "Position is not set."
+    def get_position(self) -> list[int] or None:
         return self.__position
-    def set_position(self, position: list[int]) -> None:
+    def set_position(self, position: list[int] or None) -> None:
         self.__position = position
-    def set_position_None(self) -> None:
-        self.__position = None
+
 
 class Block:
     def __init__(self, ADDRESS: list[int]) -> None:
@@ -32,10 +27,8 @@ class Block:
     def get_address(self) -> list[int]:
         return self.__address
     # Blockに付与するaddressは不変なのでsetterは定義しない
-    def set_piece(self, piece: Piece) -> None:
+    def set_piece(self, piece: Piece or None) -> None:
         self.__piece = piece
-    def set_piece_None(self) -> None:
-        self.__piece = None
     def get_piece(self) -> Piece or None:
         return self.__piece
     # 四隅のマスは脱出可能なマスとする
@@ -117,7 +110,7 @@ class Table:
             if piece == target:
                 opponent.pieces.pop(key)
                 break
-        target.set_position_None()
+        target.set_position(None)
         player.add_picked_pieces_count(target)
         # 相手の青いオバケのコマを全て取ったら勝ち
         if player.get_picked_blue_pieces_count == 4:
@@ -139,7 +132,7 @@ class Table:
             self._pick(player, destination)
         # 移動元のブロックからコマを削除
         curent_position: list[int] = player_piece.get_position()
-        self.__table[curent_position[0]][curent_position[1]].set_piece_None()
+        self.__table[curent_position[0]][curent_position[1]].set_piece(None)
         # 移動先のブロックにコマを配置
         destination_position: list[int] = destination.get_address()
         player_piece.set_position(destination_position)
