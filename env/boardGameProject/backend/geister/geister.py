@@ -1,11 +1,12 @@
 import random
+from typing import Optional, Union
 
 
 class Piece:
     def __init__(self, OWNER: str, TYPE: str) -> None:
         self.__owner = OWNER
         self.__type = TYPE
-        self.__position = None
+        self.__position: Union[list[int], None] = None
         assert TYPE in {"red", "blue"}, "Type must be either 'red' or 'blue'."
 
     # ownerはPlayer.nameと紐づくことを想定しているが、オンラインモードで名前が衝突した時、バグの可能性あり
@@ -20,26 +21,26 @@ class Piece:
         return self.__type
 
     # Pieceのtypeは不変なのでsetterは定義しない
-    def get_position(self) -> list[int] or None:
+    def get_position(self) -> Union[list[int], None]:
         return self.__position
 
-    def set_position(self, position: list[int] or None) -> None:
+    def set_position(self, position: Union[list[int], None]) -> None:
         self.__position = position
 
 
 class Block:
     def __init__(self, ADDRESS: list[int]) -> None:
         self.__address = ADDRESS
-        self.__piece = None
+        self.__piece: Union[Piece, None] = None
 
     def get_address(self) -> list[int]:
         return self.__address
 
     # Blockに付与するaddressは不変なのでsetterは定義しない
-    def set_piece(self, piece: Piece or None) -> None:
+    def set_piece(self, piece: Union[Piece, None]) -> None:
         self.__piece = piece
 
-    def get_piece(self) -> Piece or None:
+    def get_piece(self) -> Union[Piece, None]:
         return self.__piece
 
     # 四隅のマスは脱出可能なマスとする
@@ -109,7 +110,7 @@ class Table:
 
     # 各プレイヤーがコマの初期位置を決定するメソッド
     def initialize_pieces_position(self) -> None:
-        for i in range(self.__players):
+        for i in range(len(self.__players)):
             # 仮置き 今は全てのプレイヤーのコマをランダムに配置する
             # オフラインモード時のCPUは初期位置をランダムに決定
             # todo プレイヤーは手動で初期位置を決定するようにする
@@ -127,13 +128,15 @@ class Table:
                         piece.set_position([x, y])
                         break
 
-    def get_piece_at(self, position: list[int]) -> Piece or None:
+    def get_piece_at(self, position: list[int]) -> Union[Piece, None]:
         return self.__table[position[0]][position[1]].get_piece()
 
     # 相手の駒を奪うメソッド
     # destinationに相手の駒がある時に呼び出す
     def _pick(self, player: Player, destination: Block) -> None:
-        target: Piece = destination.get_piece()
+        target: Optional[Piece] = destination.get_piece()
+        if target is None:
+            raise ValueError("destinationに駒がありません")
         # todo destinationにある駒(target)を相手のpiecesから削除
         opponent: Player = [
             p for p in self.__players if p.get_name() != player.get_name()
@@ -152,9 +155,14 @@ class Table:
             self.__winner = opponent.get_name()
 
     # 自分のコマを動かすメソッド
-    def move(self, player: Player, player_piece: Piece, destination: Block) -> None:
+    def move(
+        self, player: Player, player_piece: Optional[Piece], destination: Block
+    ) -> None:
+        if player_piece is None:
+            raise ValueError("player_pieceを指定してください")
+        if destination is None:
+            raise ValueError("destinationを指定してください")
         # 仮置き オンライン対戦時に名前の衝突が起きた場合バグを生む可能性
-        assert player_piece.get_owner == player.get_name(), "Only YOUR piece can move."
         # 青いオバケの現在位置が脱出マスでdestinationも脱出マスであれば勝利
         if player_piece.get_type() == "blue":
             if (
@@ -163,13 +171,17 @@ class Table:
             ):
                 self.__winner = player.get_name()
                 return
+        # 移動先に相手のコマがあれば奪う
+        target: Optional[Piece] = destination.get_piece()
         if (
-            destination.get_piece is not None
-            and destination.get_piece().get_owner() != player_piece.get_owner()
+            target is not None
+            and target.get_owner() != player_piece.get_owner()
         ):
             self._pick(player, destination)
         # 移動元のブロックからコマを削除
-        curent_position: list[int] = player_piece.get_position()
+        curent_position: Optional[list[int]] = player_piece.get_position()
+        if curent_position is None:
+            raise ValueError("player_pieceのpositionがNoneです")
         self.__table[curent_position[0]][curent_position[1]].set_piece(None)
         # 移動先のブロックにコマを配置
         destination_position: list[int] = destination.get_address()
@@ -180,7 +192,9 @@ class Table:
 
     def _is_movable(self, piece: Piece, destination: Block) -> bool:
         # 現在位置の上下左右1マスより離れていたら移動不可
-        current_position: list[int] = piece.get_position()
+        current_position: Optional[list[int]] = piece.get_position()
+        if current_position is None:
+            raise ValueError("current_positionがNoneです")
         destination_position: list[int] = destination.get_address()
         x_diff: int = abs(current_position[0] - destination_position[0])
         y_diff: int = abs(current_position[1] - destination_position[1])
@@ -193,8 +207,11 @@ class Table:
             and not (destination.is_escape_block() and piece.get_type() == "blue")
         ):
             return False
+        target_piece = destination.get_piece()
+        if target_piece is None:
+            return True
         # destinationに自分のコマがある場合は移動不可
-        if piece.get_owner() == destination.get_piece().get_owner():
+        if piece.get_owner() == target_piece.get_owner():
             return False
         return True
 
@@ -206,14 +223,14 @@ class Table:
         # オンラインモードでは各プレイヤーが同時に設定できるように非同期処理を使用する
         # 一方のプレイヤーが配置完了した後に、もう一方のプレイヤーが配置をするように制御するのはUXが悪い
         while self.__winner:
-            for player in self.players:
+            for player in self.__players:
                 # todo
                 # not _is_movable の時はアラートと共に、
                 # _is_movableになるまで再度移動場所を指定させる
                 # フロントエンド実装段階ではマスをタップすることでそこにあるコマを引数pieceに渡す
                 # そして、pieceを選択した状態で行き先のマスをタップするとdestinationに渡すようにする
-                if self._is_movable:
+                if self._is_movable(Piece(player.get_name(), "blue"), Block([3, 4])):
                     # piece, destinationは仮置き
-                    self.move(player, Piece(player.get_name(), "blue"), Block(3, 4))
+                    self.move(player, Piece(player.get_name(), "blue"), Block([3, 4]))
         print("Game Set!")
         print(self.__winner + " wins!")
