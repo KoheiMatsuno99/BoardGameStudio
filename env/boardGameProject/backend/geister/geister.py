@@ -1,3 +1,6 @@
+import random
+
+
 class Piece:
     def __init__(self, OWNER: str, TYPE: str) -> None:
         self.__owner = OWNER
@@ -31,6 +34,8 @@ class Block:
     # Blockに付与するaddressは不変なのでsetterは定義しない
     def set_piece(self, piece: Piece) -> None:
         self.__piece = piece
+    def set_piece_None(self) -> None:
+        self.__piece = None
     def get_piece(self) -> Piece or None:
         return self.__piece
     # 四隅のマスは脱出可能なマスとする
@@ -80,6 +85,28 @@ class Table:
         return self.__table
     def get_winner(self) -> str:
         return self.__winner 
+    # 各プレイヤーがコマの初期位置を決定するメソッド
+    def initialize_pieces_position(self) -> None:
+        for i in range(self.__players):
+            # 仮置き 今は全てのプレイヤーのコマをランダムに配置する
+            # オフラインモード時のCPUは初期位置をランダムに決定
+            # todo プレイヤーは手動で初期位置を決定するようにする
+            # todo オンラインモードでは二人のプレイヤーがそれぞれ手動で初期位置を決定する
+            # todo 各プレイヤーの初期位置設定は非同期処理で行い、一方のプレイヤーが相手の配置完了まで待たないようにする
+            for piece in self.__players[i].pieces.values():
+                # 各コマは同じ位置には置けない
+                # [0, 0]から[7, 1]までの範囲でランダムに決定
+                # 8個のコマを全て置くまでループ
+                while True:
+                    x: int = random.randint(0, 7)
+                    y: int = random.randint(0, 1) if i == 1 else random.randint(6, 7)
+                    if self.__table[x][y].get_piece() is None:
+                        self.__table[x][y].set_piece(piece)
+                        piece.set_position([x, y])
+                        break
+    def get_piece_at(self, position: list[int]) -> Piece or None:
+        return self.__table[position[0]][position[1]].get_piece()
+
     # 相手の駒を奪うメソッド
     # destinationに相手の駒がある時に呼び出す
     def _pick(self, player: Player, destination: Block) -> None:
@@ -110,8 +137,13 @@ class Table:
                 return 
         if destination.get_piece is not None and destination.get_piece().get_owner() != player_piece.get_owner():
             self._pick(player, destination)
-        player_piece.set_position(destination.get_address())
-        destination.set_piece(player_piece)
+        # 移動元のブロックからコマを削除
+        curent_position: list[int] = player_piece.get_position()
+        self.__table[curent_position[0]][curent_position[1]].set_piece_None()
+        # 移動先のブロックにコマを配置
+        destination_position: list[int] = destination.get_address()
+        player_piece.set_position(destination_position)
+        self.__table[destination_position[0]][destination_position[1]].set_piece(player_piece)
     
     def _is_movable(self, piece: Piece, destination: Block) -> bool:
         # 現在位置の上下左右1マスより離れていたら移動不可
