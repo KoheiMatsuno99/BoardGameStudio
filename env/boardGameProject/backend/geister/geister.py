@@ -34,6 +34,8 @@ class Block:
     # Blockに付与するaddressは不変なのでsetterは定義しない
     def set_piece(self, piece: Piece) -> None:
         self.__piece = piece
+    def set_piece_None(self) -> None:
+        self.__piece = None
     def get_piece(self) -> Piece or None:
         return self.__piece
     # 四隅のマスは脱出可能なマスとする
@@ -137,7 +139,7 @@ class Table:
             self._pick(player, destination)
         # 移動元のブロックからコマを削除
         curent_position: list[int] = player_piece.get_position()
-        self.__table[curent_position[0]][curent_position[1]].set_piece(None)
+        self.__table[curent_position[0]][curent_position[1]].set_piece_None()
         # 移動先のブロックにコマを配置
         destination_position: list[int] = destination.get_address()
         player_piece.set_position(destination_position)
