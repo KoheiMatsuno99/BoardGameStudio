@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from geister.views import start_game, move_piece
+from geister.views import move_piece, start_game
 
 urlpatterns = [
     path("admin/", admin.site.urls),

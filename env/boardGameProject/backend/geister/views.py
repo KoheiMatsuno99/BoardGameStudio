@@ -1,9 +1,11 @@
 # Create your views here.
+from typing import Optional
+
 from rest_framework import api_view, status
 from rest_framework.response import Response
-from .geister import Player, Piece, Block, Table
-from typing import Optional
-from .serializers import TableSerializer, PlayerSerializer
+
+from .geister import Block, Piece, Player, Table
+from .serializers import PlayerSerializer, TableSerializer
 
 
 @api_view(["POST"])

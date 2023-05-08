@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .geister import Table, Player
+
+from .geister import Player, Table
 
 
 class TableSerializer(serializers.Serializer):
