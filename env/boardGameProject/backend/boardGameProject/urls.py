@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from geister.views import start_game, move_piece
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("start_game/", start_game, name="start_game"),
+    path("move_piece/", move_piece, name="move_piece"),
 ]
