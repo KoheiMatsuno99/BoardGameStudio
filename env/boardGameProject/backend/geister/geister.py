@@ -195,7 +195,7 @@ class Table:
         destination_position: list[int] = destination.get_address()
         x_diff: int = abs(current_position[0] - destination_position[0])
         y_diff: int = abs(current_position[1] - destination_position[1])
-        if x_diff > 1 and y_diff > 1:
+        if x_diff + y_diff > 1:
             return False
         # 移動しないという選択肢はなし(青いオバケが脱出する場合は例外)
         if (
