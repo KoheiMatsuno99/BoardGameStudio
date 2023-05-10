@@ -24,12 +24,17 @@ class Piece:
     def get_position(self) -> Union[list[int], None]:
         return self.__position
 
+    # table[x][y].set_piece()と合わせて使う
     def set_position(self, position: Union[list[int], None]) -> None:
         self.__position = position
 
 
 class Block:
     def __init__(self, ADDRESS: list[int]) -> None:
+        if ADDRESS[0] not in range(0, 8):
+            raise ValueError("Address x must be in range(0, 8)")
+        if ADDRESS[1] not in range(0, 8):
+            raise ValueError("Address y must be in range(0, 8)")
         self.__address = ADDRESS
         self.__piece: Union[Piece, None] = None
 
@@ -146,6 +151,9 @@ class Table:
                 opponent.pieces.pop(key)
                 break
         target.set_position(None)
+        self.__table[destination.get_address()[0]][
+            destination.get_address()[1]
+        ].set_piece(None)
         player.add_picked_pieces_count(target)
         # 相手の青いオバケのコマを全て取ったら勝ち
         if player.get_picked_blue_pieces_count == 4:
@@ -187,7 +195,8 @@ class Table:
             player_piece
         )
 
-    def _is_movable(self, piece: Piece, destination: Block) -> bool:
+    @staticmethod
+    def _is_movable(piece: Piece, destination: Block) -> bool:
         # 現在位置の上下左右1マスより離れていたら移動不可
         current_position: Optional[list[int]] = piece.get_position()
         if current_position is None:
