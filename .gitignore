@@ -1,0 +1,11 @@
+# Pythonのキャッシュとコンパイル済みファイルを無視する
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 仮想環境を無視する
+env/
+
+# GitHub Actionsのワークフローは無視する
+.gitHub/
