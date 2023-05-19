@@ -48,17 +48,6 @@ class Block:
     def get_piece(self) -> Union[Piece, None]:
         return self.__piece
 
-    # 四隅のマスは脱出可能なマスとする
-    def is_escape_block(self) -> bool:
-        # todo より良い書き方があれば修正
-        # 8✖️8のボードを想定
-        return (
-            self.__address == [0, 0]
-            or self.__address == [0, 7]
-            or self.__address == [7, 0]
-            or self.__address == [7, 7]
-        )
-
 
 class Player:
     __picked_red_pieces_count: int = 0
@@ -171,14 +160,11 @@ class Table:
         if destination is None:
             raise ValueError("destinationを指定してください")
         # 仮置き オンライン対戦時に名前の衝突が起きた場合バグを生む可能性
-        # 青いオバケの現在位置が脱出マスでdestinationも脱出マスであれば勝利
-        if player_piece.get_type() == "blue":
-            if (
-                destination.is_escape_block()
-                and player_piece.get_position() == destination.get_address()
-            ):
-                self.__winner = player.get_name()
-                return
+        # この実装では脱出可能なマスにコマがある場合、次のターンで自動的に勝利になる
+        if self._is_escapable(player):
+            # todo 脱出されるかどうかポップアップを出す
+            self.__winner = player.get_name()
+            return
         # 移動先に相手のコマがあれば奪う
         target: Optional[Piece] = destination.get_piece()
         if target is not None and target.get_owner() != player_piece.get_owner():
@@ -195,8 +181,7 @@ class Table:
             player_piece
         )
 
-    @staticmethod
-    def _is_movable(piece: Piece, destination: Block) -> bool:
+    def _is_movable(self, piece: Piece, destination: Block) -> bool:
         # 現在位置の上下左右1マスより離れていたら移動不可
         current_position: Optional[list[int]] = piece.get_position()
         if current_position is None:
@@ -206,20 +191,50 @@ class Table:
         y_diff: int = abs(current_position[1] - destination_position[1])
         if x_diff + y_diff > 1:
             return False
-        # 移動しないという選択肢はなし(青いオバケが脱出する場合は例外)
-        if (
-            x_diff == 0
-            and y_diff == 0
-            and not (destination.is_escape_block() and piece.get_type() == "blue")
-        ):
+        # 移動しないという選択肢はなし
+        if x_diff == 0 and y_diff == 0:
             return False
         target_piece = destination.get_piece()
         if target_piece is None:
             return True
         # destinationに自分のコマがある場合は移動不可
         if piece.get_owner() == target_piece.get_owner():
+            print(piece.get_owner())
+            print(target_piece.get_owner())
             return False
         return True
+
+    def _is_escapable(self, player: Player) -> bool:
+        if (
+            player == self.__players[0]
+            and self.__table[0][0].get_piece() is not None
+            and self.__table[0][7].get_piece().get_owner() == player
+            and self.__table[0][7].get_piece().get_type() == "blue"
+        ):
+            return True
+        elif (
+            player == self.__players[0]
+            and self.__table[0][7].get_piece() is not None
+            and self.__table[0][7].get_piece().get_owner() == player
+            and self.__table[0][7].get_piece().get_type() == "blue"
+        ):
+            return True
+        elif (
+            player == self.__players[1]
+            and self.__table[7][0].get_piece() is not None
+            and self.__table[7][0].get_piece().get_owner() == player
+            and self.__table[7][0].get_piece().get_type() == "blue"
+        ):
+            return True
+        elif (
+            player == self.__players[1]
+            and self.__table[7][7].get_piece() is not None
+            and self.__table[7][7].get_piece().get_owner() == player
+            and self.__table[7][7].get_piece().get_type() == "blue"
+        ):
+            return True
+        else:
+            return False
 
     # ゲームの進行を行うメソッド
     def play(self) -> None:
