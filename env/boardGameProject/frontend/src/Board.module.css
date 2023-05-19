@@ -1,0 +1,80 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.board{
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+}
+
+.row{
+    display: flex;
+}
+
+.block{
+    flex: 1;
+    padding-bottom: 12.5%;
+    background-color: cornflowerblue;
+    border: 1px solid #333;
+}
+
+.capturedPiecesTop,
+.capturedPiecesBottom{
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    height: 12.5vh;
+    background-color: bisque;
+    border: 1px solid #333;
+}
+
+/* For smartphones */
+@media screen and (max-width: 767px) {
+.block {
+    padding-bottom: 15%;
+    }
+.capturedPiecesTop,
+.capturedPiecesBottom{
+    height: 20vh;
+    }
+}
+
+/* For tablets */
+@media screen and (min-width: 768px) and (max-width: 912px) {
+    .board {
+        width: 100vw;
+        }
+    .block {
+        padding-bottom: 12.5%;
+        }
+    .capturedPiecesTop,
+    .capturedPiecesBottom{
+        height: 15vh;
+        }
+}
+
+/* For PCs(Laptop) */
+@media screen and (min-width: 913px) and (max-width: 1024px) {
+    .board{
+        width: 40vw;
+    }
+    .capturedPiecesBottom,
+    .capturedPiecesTop{
+        height: 15vh;
+    }
+}
+/* For PCs(Desktop) */
+@media screen and (min-width: 1025px) {
+.board {
+    width: 35vw;
+    }
+.capturedPiecesTop,
+.capturedPiecesBottom{
+    height: 15vh;
+    }
+}
+
