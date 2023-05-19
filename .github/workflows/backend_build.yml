@@ -25,7 +25,7 @@ jobs:
       - name: Lint
         run: | 
           black --line-length 88 boardGameProject/backend
-          flake8 --config=.github/workflows/flake8 boardGameProject/backend
+          flake8 --config=.github/workflows/.flake8 boardGameProject/backend
           isort boardGameProject/backend 
       - name: Run pytest
         run: pytest boardGameProject/backend/geister/tests.py
