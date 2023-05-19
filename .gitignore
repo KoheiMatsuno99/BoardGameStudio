@@ -6,3 +6,6 @@ __pycache__/
 
 # 仮想環境を無視する
 env/
+
+# GitHub Actionsのワークフローは無視する
+.gitHub/
