@@ -24,8 +24,8 @@ jobs:
           pip install -r requirements.txt
       - name: Lint
         run: | 
-          black --line-length 79 boardGameProject/backend
-          flake8 boardGameProject/backend
+          black --line-length 88 boardGameProject/backend
+          flake8 --config= .flake8 boardGameProject/backend
           isort boardGameProject/backend 
       - name: Run pytest
         run: pytest boardGameProject/backend/geister/tests.py
