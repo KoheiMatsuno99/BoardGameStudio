@@ -134,7 +134,7 @@ class Table:
     def _pick(self, player: Player, destination: Block) -> None:
         target: Optional[Piece] = destination.get_piece()
         if target is None:
-            raise ValueError("destinationに駒がありません")
+            raise ValueError("移動先に駒がありません")
         # todo destinationにある駒(target)を相手のpiecesから削除
         opponent: Player = [
             p for p in self.__players if p.get_name() != player.get_name()
@@ -149,10 +149,11 @@ class Table:
         ].set_piece(None)
         player.add_picked_pieces_count(target)
         # 相手の青いオバケのコマを全て取ったら勝ち
-        if player.get_picked_blue_pieces_count == 4:
+        if player.get_picked_blue_pieces_count() == 4:
+            print(f"{player.get_name()}は青いオバケを全て取った！")
             self.__winner = player.get_name()
         # 相手の赤いオバケのコマを全て取ったら負け（相手の勝ち）
-        elif player.get_picked_red_pieces_count == 4:
+        elif player.get_picked_red_pieces_count() == 4:
             self.__winner = opponent.get_name()
 
     # 自分のコマを動かすメソッド
@@ -210,12 +211,18 @@ class Table:
 
     def _is_escapable(self, player: Player) -> bool:
         for position in self.__escapable_positions[player]:
-            piece: Piece = self.__table[position[0]][position[1]].get_piece()
-            return (
+            piece: Union[Piece, None] = self.__table[position[0]][
+                position[1]
+            ].get_piece()
+            if piece is None:
+                return False
+            if (
                 piece is not None
                 and piece.get_owner() == player
                 and piece.get_type() == "blue"
-            )
+            ):
+                return True
+        return False
 
     # ゲームの進行を行うメソッド
     def play(self) -> None:
