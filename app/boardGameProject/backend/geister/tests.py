@@ -128,3 +128,41 @@ def test_pick_with_last_red_piece():
     assert piece1 not in player2.pieces.values()
     assert player1.get_picked_red_pieces_count() == 4
     assert table.get_winner() == player2.get_name()
+
+
+def test_move():
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    piece1 = Piece(t.get_players()[0], "blue")
+    piece1.set_position([0, 0])
+    table[0][0].set_piece(piece1)
+    with pytest.raises(ValueError):
+        t.move(t.get_players()[0], None, table[0][1])
+    with pytest.raises(ValueError):
+        t.move(t.get_players()[0], piece1, None)
+    t.move(t.get_players()[0], piece1, table[0][1])
+    assert t.get_winner() == t.get_players()[0].get_name()
+
+    piece2 = Piece(t.get_players()[1], "blue")
+    piece2.set_position([5, 1])
+    table[5][1].set_piece(piece2)
+    t.move(t.get_players()[1], piece2, table[5][2])
+    assert table[5][1].get_piece() is None
+    assert piece2.get_position() == [5, 2]
+    assert table[5][2].get_piece() == piece2
+
+    piece3 = Piece(t.get_players()[1], "red")
+    piece3.set_position([2, 5])
+    table[2][5].set_piece(piece3)
+    piece4 = Piece(t.get_players()[0], "red")
+    piece4.set_position([3, 5])
+    table[3][5].set_piece(piece4)
+    t.move(t.get_players()[1], piece3, table[3][5])
+    assert piece4 not in t.get_players()[0].pieces.values()
+    assert table[2][5].get_piece() is None
+    assert piece3.get_position() == [3, 5]
+
+    piece5 = Piece(t.get_players()[1], "red")
+    piece5.set_position(None)
+    with pytest.raises(ValueError):
+        t.move(t.get_players()[1], piece5, table[3][1])

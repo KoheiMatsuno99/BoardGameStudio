@@ -161,9 +161,9 @@ class Table:
         self, player: Player, player_piece: Optional[Piece], destination: Block
     ) -> None:
         if player_piece is None:
-            raise ValueError("player_pieceを指定してください")
+            raise ValueError("動かすコマを指定してください")
         if destination is None:
-            raise ValueError("destinationを指定してください")
+            raise ValueError("移動先を指定してください")
         # 仮置き オンライン対戦時に名前の衝突が起きた場合バグを生む可能性
         # この実装では脱出可能なマスにコマがある場合、次のターンで自動的に勝利になる
         if self._is_escapable(player):
