@@ -27,3 +27,16 @@ def test_is_movable():
     block2 = table[7][1]
     block2.set_piece(piece2)
     assert not t._is_movable(piece3, table[7][1])
+
+
+def test_is_escapable():
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    assert not t._is_escapable(t.get_players()[0])
+    table[0][7].set_piece(Piece(t.get_players()[0], "red"))
+    assert not t._is_escapable(t.get_players()[0])
+    table[7][0].set_piece(Piece(t.get_players()[0], "blue"))
+    assert not t._is_escapable(t.get_players()[0])
+    table[0][0].set_piece(Piece(t.get_players()[0], "blue"))
+    assert t._is_escapable(t.get_players()[0])
+    assert not t._is_escapable(t.get_players()[1])

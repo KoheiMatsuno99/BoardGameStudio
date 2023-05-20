@@ -92,6 +92,10 @@ class Table:
             [Block([x, y]) for y in range(8)] for x in range(8)
         ]
         self.__winner: str = ""
+        self.__escapable_positions = {
+            self.__players[0]: [(0, 0), (0, 7)],
+            self.__players[1]: [(7, 0), (7, 7)],
+        }
 
     def get_players(self) -> list[Player]:
         return self.__players
@@ -205,36 +209,13 @@ class Table:
         return True
 
     def _is_escapable(self, player: Player) -> bool:
-        if (
-            player == self.__players[0]
-            and self.__table[0][0].get_piece() is not None
-            and self.__table[0][7].get_piece().get_owner() == player
-            and self.__table[0][7].get_piece().get_type() == "blue"
-        ):
-            return True
-        elif (
-            player == self.__players[0]
-            and self.__table[0][7].get_piece() is not None
-            and self.__table[0][7].get_piece().get_owner() == player
-            and self.__table[0][7].get_piece().get_type() == "blue"
-        ):
-            return True
-        elif (
-            player == self.__players[1]
-            and self.__table[7][0].get_piece() is not None
-            and self.__table[7][0].get_piece().get_owner() == player
-            and self.__table[7][0].get_piece().get_type() == "blue"
-        ):
-            return True
-        elif (
-            player == self.__players[1]
-            and self.__table[7][7].get_piece() is not None
-            and self.__table[7][7].get_piece().get_owner() == player
-            and self.__table[7][7].get_piece().get_type() == "blue"
-        ):
-            return True
-        else:
-            return False
+        for position in self.__escapable_positions[player]:
+            piece: Piece = self.__table[position[0]][position[1]].get_piece()
+            return (
+                piece is not None
+                and piece.get_owner() == player
+                and piece.get_type() == "blue"
+            )
 
     # ゲームの進行を行うメソッド
     def play(self) -> None:
