@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./GeisterRule.module.css";
 import Lobby from "./Lobby";
 import Board from "./Board";
+import { ApiGateway } from "./BoardController";
 
 const GeisterRule: React.FC = () => {
     const [doesGoBack, setGoback] = React.useState(false);
@@ -10,6 +11,7 @@ const GeisterRule: React.FC = () => {
         setGoback(true);
     }
     const handlePlay = () => {
+        ApiGateway.initializeGame("you", "cpu");
         setPlay(true);
     }
     if (doesGoBack) {
