@@ -1,0 +1,26 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: black;
+}
+
+.background{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url("../public/img/entrance.jpeg");
+    background-repeat: no-repeat;
+    background-position: center; /* 画像をx軸の中央に配置 */
+    background-size: auto; /* 画面いっぱいに拡大 */
+    width: 100%;
+    height: 100vh;
+}
+
+.button{
+    font-family:'Courier New', Courier, monospace;
+    font-size: 2.0rem;
+}
