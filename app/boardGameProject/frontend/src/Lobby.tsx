@@ -8,18 +8,13 @@ const Lobby: React.FC = () => {
         setGeisterRule(true);
     }
     return (
-        <div className={styles.container}>
-            <div className={styles.background}>
-                {
-                    showGeisterRule ? <GeisterRule /> : (
+            showGeisterRule ? <GeisterRule /> : (
+                <div className={styles.container}>
+                    <div className={styles.background}>
                         <button className={styles.button} id="single-mode-btn" onClick={handleClick}>Single Mode</button>
-                    )
-                }
-                
-            </div>
-        
-              
-        </div>
+                    </div>
+                </div>
+            )
     )
 }
 
