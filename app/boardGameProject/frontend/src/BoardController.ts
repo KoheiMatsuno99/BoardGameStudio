@@ -6,6 +6,7 @@ export class ApiGateway{
             {"player2": player2}
         ];
         const response = await axios.post('/api/start_game', playerData);
+        return response.data;
     }
     public static async movePiece(player: string, player_piece: string, destination: string){
         
