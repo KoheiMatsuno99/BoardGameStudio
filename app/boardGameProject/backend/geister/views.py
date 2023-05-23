@@ -10,7 +10,7 @@ from .serializers import PlayerSerializer, TableSerializer
 
 @api_view(["POST"])
 def start_game(request) -> Response:
-    player_data: Player = request.data["player"]
+    player_data = request.data
     player_serializer = PlayerSerializer(data=player_data, many=True)
     if player_serializer.is_valid():
         players: list[Player] = player_serializer.save()
