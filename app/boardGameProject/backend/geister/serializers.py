@@ -3,8 +3,16 @@ from rest_framework import serializers
 from .geister import Player, Table
 
 
-class BlockSerializer(serializers.Serializer):
+class PieceSerializer(serializers.Serializer):
+    owner = serializers.CharField()
+    type = serializers.CharField()
     position = serializers.ListField(
+        child=serializers.IntegerField(min_value=0, max_value=7)
+    )
+
+
+class BlockSerializer(serializers.Serializer):
+    address = serializers.ListField(
         child=serializers.IntegerField(min_value=0, max_value=7)
     )
     piece = serializers.StringRelatedField(allow_null=True)
@@ -19,7 +27,9 @@ class BlockSerializer(serializers.Serializer):
 class TableSerializer(serializers.Serializer):
     players = serializers.StringRelatedField(many=True)
     winner = serializers.CharField()
-    table = serializers.ListField(child=BlockSerializer(many=True))
+    table = serializers.ListField(
+        child=serializers.ListField(child=BlockSerializer())
+    )
 
     def create(self, validated_data) -> Table:
         return Table(**validated_data)

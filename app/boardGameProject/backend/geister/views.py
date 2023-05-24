@@ -3,17 +3,18 @@ from typing import Optional
 
 from rest_framework import api_view, status
 from rest_framework.response import Response
+from rest_framework.request import Request
 
 from .geister import Block, Piece, Player, Table
 from .serializers import PlayerSerializer, TableSerializer
 
 
 @api_view(["POST"])
-def start_game(request) -> Response:
+def start_game(request: Request) -> Response:
     player_data = request.data
     player_serializer = PlayerSerializer(data=player_data, many=True)
     if player_serializer.is_valid():
-        players: list[Player] = player_serializer.save()
+        players = player_serializer.save()
         table = Table(players)
         request.session["table"] = table
         table_serializer = TableSerializer(table)
