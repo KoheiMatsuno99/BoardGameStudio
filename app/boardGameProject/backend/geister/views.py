@@ -1,4 +1,3 @@
-# Create your views here.
 from typing import Optional
 
 from rest_framework.decorators import api_view
@@ -15,10 +14,12 @@ def start_game(request: Request) -> Response:
     player_data = request.data
     player_serializer = PlayerSerializer(data=player_data, many=True)
     if player_serializer.is_valid():
-        players = player_serializer.save()
+        players: list[Player] = player_serializer.save()
         table = Table(players)
-        request.session["table"] = table
+        serialized_table = TableSerializer(table)
+        request.session["table"] = serialized_table.data
         table_serializer = TableSerializer(table)
+        print(table_serializer.data)
         return Response(table_serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(player_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

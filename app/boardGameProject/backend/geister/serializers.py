@@ -27,9 +27,7 @@ class BlockSerializer(serializers.Serializer):
 class TableSerializer(serializers.Serializer):
     players = serializers.StringRelatedField(many=True)
     winner = serializers.CharField()
-    table = serializers.ListField(
-        child=serializers.ListField(child=BlockSerializer())
-    )
+    table = serializers.ListField(child=serializers.ListField(child=BlockSerializer()))
 
     def create(self, validated_data) -> Table:
         return Table(**validated_data)
