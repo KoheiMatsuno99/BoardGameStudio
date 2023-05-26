@@ -2,16 +2,13 @@ import React from "react";
 import styles from "./Board.module.css";
 import { ApiGateway } from "./BoardController";
 
-const Board: React.FC = () => {
-    const [table, setTable] = React.useState(null);
-    React.useEffect(() => {
-        const initialize = async () => {
-            const initialTable = await ApiGateway.initializeGame("player1", "player2");
-            setTable(initialTable);
-        };
+interface BoardProps {
+    //to do: define initialData type
+    initialData: any;
+}
 
-        initialize();
-    }, []);
+const Board: React.FC<BoardProps> = ({initialData}) => {
+    const [table, setTable] = React.useState(null);
 
     React.useEffect(() => {
         if(table){
@@ -21,7 +18,7 @@ const Board: React.FC = () => {
     return (
         <div className={styles.container}>
             <div className={styles.capturedPiecesTop}>
-
+                {initialData["players"][0]}
             </div>
             <div className={styles.board}>
                 {Array.from({length: 8}).map((_, row_i) => (
@@ -33,7 +30,7 @@ const Board: React.FC = () => {
                 ))}
             </div>
             <div className={styles.capturedPiecesBottom}>
-
+                {initialData["players"][1]}
             </div>
         </div>
     )

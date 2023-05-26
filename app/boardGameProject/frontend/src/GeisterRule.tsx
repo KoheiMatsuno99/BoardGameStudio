@@ -7,18 +7,20 @@ import { ApiGateway } from "./BoardController";
 const GeisterRule: React.FC = () => {
     const [doesGoBack, setGoback] = React.useState(false);
     const [doesPlay, setPlay] = React.useState(false);
+    const [initialTable, setInitialTable] = React.useState(null);
     const handleGoback = () => {
         setGoback(true);
     }
-    const handlePlay = () => {
-        ApiGateway.initializeGame("you", "cpu");
+    const handlePlay = async () => {
+        const initialData = await ApiGateway.initializeGame("you", "cpu");
+        setInitialTable(initialData);
         setPlay(true);
     }
     if (doesGoBack) {
         return <Lobby />
     }
     if (doesPlay) {
-        return <Board />
+        return <Board initialData={initialTable} />
     }
     return (
         <div className={styles.container}>
