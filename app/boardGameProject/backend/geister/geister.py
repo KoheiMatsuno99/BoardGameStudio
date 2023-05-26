@@ -38,6 +38,14 @@ class Block:
         self.__address = ADDRESS
         self.__piece: Union[Piece, None] = None
 
+    @property
+    def address(self) -> list[int]:
+        return self.__address
+
+    @property
+    def piece(self) -> Union[Piece, None]:
+        return self.__piece
+
     def get_address(self) -> list[int]:
         return self.__address
 
@@ -96,6 +104,18 @@ class Table:
             self.__players[0]: [(0, 0), (0, 7)],
             self.__players[1]: [(7, 0), (7, 7)],
         }
+
+    @property
+    def players(self) -> list[Player]:
+        return self.__players
+
+    @property
+    def winner(self) -> str:
+        return self.__winner
+
+    @property
+    def table(self) -> list[list[Block]]:
+        return self.__table
 
     def get_players(self) -> list[Player]:
         return self.__players
