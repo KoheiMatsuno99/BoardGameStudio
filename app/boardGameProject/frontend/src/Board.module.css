@@ -15,88 +15,76 @@
     display: flex;
 }
 
-.block{
-    flex: 1;
-    padding-bottom: 12.5%;
+.block {
+    position: relative;
+    width: 12.5%;
+    height: 10.5vh;
     background-color: cornflowerblue;
     border: 1px solid #333;
+    box-sizing: border-box;
 }
 
-.capturedPiecesTop,
-.capturedPiecesBottom{
-    display: flex;
-    justify-content: center;
-    width: 100vw; 
-    height: 12.5vh;
-    background-color: bisque;
-    border: 1px solid #333;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+.ghostImgSmall {
+    flex: 1 1 auto;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    z-index: 1;
 }
 
-.ghostImg{
-    width: 12.5%;
-    height: auto;
-    object-fit:scale-down;
+.capturedPiecesTop .ghostImg,
+.capturedPiecesBottom .ghostImg {
+    flex: none; 
+    width: 12.5%; 
+    height: 12.5%; 
 }
+
 
 /* For smartphones */
 @media screen and (max-width: 767px) {
-.block {
-    padding-bottom: 15%;
-    }
-.capturedPiecesTop,
-.capturedPiecesBottom{
-    height: 20vh;
-    }
+    .block {
+        height: 8.5vh;
+        }
+    .capturedPiecesTop,
+    .capturedPiecesBottom{
+        background-color: bisque;
+        height: 16vh;
+        }
 }
 
 /* For tablets */
 @media screen and (min-width: 768px) and (max-width: 912px) {
-    .board {
-        width: 100vw;
-        }
+
     .block {
-        padding-bottom: 12.5%;
+        height: 10vh;
         }
     .capturedPiecesTop,
     .capturedPiecesBottom{
-        height: 15vh;
+        background-color: bisque;
+        height: 10vh;
         }
 }
 
 /* For PCs(Laptop) */
 @media screen and (min-width: 913px) and (max-width: 1024px) {
     .board{
-        width: 40vw;
+        width: 50vw;
     }
-    .capturedPiecesBottom,
-    .capturedPiecesTop{
-        height: 15vh;
-    }
-    .ghostImg{
-        width: 5%;
-        height: auto;
+    .capturedPiecesBottom, .capturedPiecesTop{
+        background-color: bisque;
+        width: 50vw;
     }
 }
 /* For PCs(Desktop) */
 @media screen and (min-width: 1025px) {
-    .board {
-        width: 35vw;
-        }
-    .capturedPiecesTop,
-    .capturedPiecesBottom{
-        height: 15vh;
-        }
-    .ghostImg{
-        width: 4.35%;
-        height: auto;
+    .board{
+        width: 45vw;
+    }
+    .capturedPiecesBottom, .capturedPiecesTop{
+        background-color: bisque;
+        width: 45vw;
     }
 }
-
-
-
 
 .dFlex{
     display: flex;
