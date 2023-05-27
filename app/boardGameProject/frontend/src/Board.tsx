@@ -1,24 +1,27 @@
 import React from "react";
 import styles from "./Board.module.css";
-import { ApiGateway } from "./BoardController";
+
+interface Piece {
+    owner: string;
+    type: string;
+    position: number[];
+}
 
 interface BoardProps {
-    //to do: define initialData type
+    // todo: define initialData type
     initialData: any;
 }
 
 const Board: React.FC<BoardProps> = ({initialData}) => {
-    const [table, setTable] = React.useState(null);
-
-    React.useEffect(() => {
-        if(table){
-
-        }
-    }, [table])
     return (
         <div className={styles.container}>
             <div className={styles.capturedPiecesTop}>
-                {initialData["players"][0]}
+                <div>{initialData["players"][1]["name"]}</div>          
+                <div className={styles.dFlex}>
+                    {initialData["players"][1]["pieces"].filter((piece: Piece) => piece.owner === initialData["players"][1]["name"]).map((piece: Piece , index: number) => (
+                        <img key={initialData["players"][1]["name"] + index} src={`../img/${piece.type}Ghost.jpeg`} className={styles.ghostImg}></img>
+                    ))}
+                </div>
             </div>
             <div className={styles.board}>
                 {Array.from({length: 8}).map((_, row_i) => (
@@ -30,7 +33,12 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
                 ))}
             </div>
             <div className={styles.capturedPiecesBottom}>
-                {initialData["players"][1]}
+                <div className={styles.dFlex}>
+                    {initialData["players"][0]["pieces"].filter((piece: Piece) => piece.owner === initialData["players"][0]["name"]).map((piece: Piece , index: number) => (
+                            <img key={initialData["players"][0]["name"] + index} src={`../img/${piece.type}Ghost.jpeg`} className={styles.ghostImg}></img>
+                        ))}
+                </div>
+                <div>{initialData["players"][0]["name"]}</div>
             </div>
         </div>
     )

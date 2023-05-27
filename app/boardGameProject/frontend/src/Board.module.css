@@ -26,10 +26,19 @@
 .capturedPiecesBottom{
     display: flex;
     justify-content: center;
-    width: 100vw;
+    width: 100vw; 
     height: 12.5vh;
     background-color: bisque;
     border: 1px solid #333;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.ghostImg{
+    width: 12.5%;
+    height: auto;
+    object-fit:scale-down;
 }
 
 /* For smartphones */
@@ -66,15 +75,30 @@
     .capturedPiecesTop{
         height: 15vh;
     }
+    .ghostImg{
+        width: 5%;
+        height: auto;
+    }
 }
 /* For PCs(Desktop) */
 @media screen and (min-width: 1025px) {
-.board {
-    width: 35vw;
-    }
-.capturedPiecesTop,
-.capturedPiecesBottom{
-    height: 15vh;
+    .board {
+        width: 35vw;
+        }
+    .capturedPiecesTop,
+    .capturedPiecesBottom{
+        height: 15vh;
+        }
+    .ghostImg{
+        width: 4.35%;
+        height: auto;
     }
 }
 
+
+
+
+.dFlex{
+    display: flex;
+    justify-content: center;
+}

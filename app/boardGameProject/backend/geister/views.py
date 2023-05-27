@@ -19,10 +19,7 @@ def start_game(request: Request) -> Response:
         serialized_table = TableSerializer(table)
         request.session["table"] = serialized_table.data
         table_serializer = TableSerializer(table)
-        print(
-            "player1 is " + table_serializer.data["players"][0],
-            "player2 is " + table_serializer.data["players"][1],
-        )
+        print(table_serializer.data["players"][0])
         return Response(table_serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(player_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
