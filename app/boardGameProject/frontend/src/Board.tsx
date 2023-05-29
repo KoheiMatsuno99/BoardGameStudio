@@ -48,15 +48,16 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
 
     const handlePieceClick = (piece: Piece) => {
         setSelectedPiece(piece);
-        setPlayerPieces(playerUnsetPieces => playerUnsetPieces.map(pieces => pieces.filter(p => p !== piece)));
     }
 
     const handleBlockClick = (block: Block) => {
         if (!selectedPiece) return;
         if (block.piece) return;
         setBoard(board => board.map(row => row.map(b => b === block ? { ...b, piece: selectedPiece } : b)));
+        setPlayerPieces(playerUnsetPieces => playerUnsetPieces.map(pieces => pieces.filter(p => p !== selectedPiece)));
         setSelectedPiece(null);
     }
+    
 
     return (
         <div className={styles.container}>
