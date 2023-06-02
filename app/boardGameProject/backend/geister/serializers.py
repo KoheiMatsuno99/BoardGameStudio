@@ -60,11 +60,17 @@ class TableSerializer(serializers.Serializer):
     players = serializers.ListField(child=PlayerSerializer())
     winner = serializers.CharField(allow_blank=True)
     table = serializers.ListField(child=serializers.ListField(child=BlockSerializer()))
-    
+
     def create(self, validated_data) -> Table:
+        players_data = validated_data.pop("players", [])
+        players = []
+        for player_data in players_data:
+            player_serializer = PlayerSerializer(data=player_data)
+            if player_serializer.is_valid():
+                players.append(player_serializer.save())
         validated_data.pop("winner", None)
         validated_data.pop("table", None)
-        return Table(**validated_data)
+        return Table(players=players, **validated_data)
 
     def update(self, instance, validated_data):
         current_table_data = validated_data.pop("table", None)
