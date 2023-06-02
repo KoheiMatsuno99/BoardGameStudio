@@ -1,12 +1,12 @@
 import random
-from typing import Optional, Union
+from typing import Optional
 
 
 class Piece:
     def __init__(self, OWNER: str, TYPE: str) -> None:
         self.__owner = OWNER
         self.__type = TYPE
-        self.__position: Union[list[int], None] = None
+        self.__position: Optional[list[int]] = None
         assert TYPE in {"red", "blue"}, "Type must be either 'red' or 'blue'."
 
     # ownerはPlayer.nameと紐づくことを想定しているが、オンラインモードで名前が衝突した時、バグの可能性あり
@@ -21,11 +21,11 @@ class Piece:
         return self.__type
 
     # Pieceのtypeは不変なのでsetterは定義しない
-    def get_position(self) -> Union[list[int], None]:
+    def get_position(self) -> Optional[list[int]]:
         return self.__position
 
     # table[x][y].set_piece()と合わせて使う
-    def set_position(self, position: Union[list[int], None]) -> None:
+    def set_position(self, position: Optional[list[int]]) -> None:
         self.__position = position
 
 
@@ -36,31 +36,28 @@ class Block:
         if ADDRESS[1] not in range(0, 8):
             raise ValueError("Address y must be in range(0, 8)")
         self.__address = ADDRESS
-        self.__piece: Union[Piece, None] = None
+        self.__piece: Optional[Piece] = None
 
     @property
     def address(self) -> list[int]:
         return self.__address
 
     @property
-    def piece(self) -> Union[Piece, None]:
+    def piece(self) -> Optional[Piece]:
         return self.__piece
 
     def get_address(self) -> list[int]:
         return self.__address
 
     # Blockに付与するaddressは不変なのでsetterは定義しない
-    def set_piece(self, piece: Union[Piece, None]) -> None:
+    def set_piece(self, piece: Optional[Piece]) -> None:
         self.__piece = piece
 
-    def get_piece(self) -> Union[Piece, None]:
+    def get_piece(self) -> Optional[Piece]:
         return self.__piece
 
 
 class Player:
-    __picked_red_pieces_count: int = 0
-    __picked_blue_pieces_count: int = 0
-
     # todo オンライン対戦時に名前被りで衝突する可能性があるので、名前ではなくidに変更or追加
     # idはプレイヤーの戦績を管理するPlayerInfoクラスからとってくる
     def __init__(self, name: str) -> None:
@@ -71,6 +68,16 @@ class Player:
         self.pieces.update(
             {f"{self.name}_red_{i}": Piece(self.name, "red") for i in range(4)}
         )
+        self.__picked_red_pieces_count: int = 0
+        self.__picked_blue_pieces_count: int = 0
+    
+    @property
+    def picked_blue_pieces_count(self) -> int:
+        return self.__picked_blue_pieces_count
+    
+    @property
+    def picked_red_pieces_count(self) -> int:
+        return self.__picked_red_pieces_count
 
     def get_name(self) -> str:
         return self.name
@@ -146,7 +153,7 @@ class Table:
                         piece.set_position([x, y])
                         break
 
-    def get_piece_at(self, position: list[int]) -> Union[Piece, None]:
+    def get_piece_at(self, position: list[int]) -> Optional[Piece]:
         return self.__table[position[0]][position[1]].get_piece()
 
     # 相手の駒を奪うメソッド
@@ -231,7 +238,7 @@ class Table:
 
     def _is_escapable(self, player: Player) -> bool:
         for position in self.__escapable_positions[player]:
-            piece: Union[Piece, None] = self.__table[position[0]][
+            piece: Optional[Piece] = self.__table[position[0]][
                 position[1]
             ].get_piece()
             if piece is None:
