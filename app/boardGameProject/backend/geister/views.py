@@ -19,15 +19,38 @@ def start_game(request: Request) -> Response:
         serialized_table = TableSerializer(table)
         request.session["table"] = serialized_table.data
         table_serializer = TableSerializer(table)
-        print(table_serializer.data["players"][0])
+        print(table_serializer.data)
         return Response(table_serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(player_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
-def move_piece(request) -> Response:
-    table: Table = request.session.get("table")
+def get_ready(request: Request) -> Response:
+    print("Received data of initial positions")
+    print(f"Session ID get_ready: {request.session.session_key}")
+    current_table_data = request.session.get("table")
+    if current_table_data is None:
+        return Response(
+            {"detail": "Session data not found"}, status=status.HTTP_400_BAD_REQUEST
+        )
+    new_table_data = request.data
+    print('new_request_data is following this')
+    print("----------")
+    print(f'{new_table_data}')
+    print("----------")
+    table_serializer = TableSerializer(data=current_table_data)
+    if table_serializer.is_valid():
+        updated_table = table_serializer.save()
+        request.session["table"] = TableSerializer(updated_table).save()
+        return Response(request.session["table"], status=status.HTTP_200_OK)
+    else:
+        return Response(table_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def move_piece(request: Request) -> Response:
+    table = request.session.get("table")
     if table is None:
         return Response({"error": "ゲームが開始されていません"}, status=status.HTTP_400_BAD_REQUEST)
     player: Player = request.data["player"]
