@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import styles from "./Board.module.css";
+import { ApiGateway } from "./BoardController";
 
-interface Piece {
+export interface Piece {
     owner: string;
     type: string;
     position: number[];
 }
 
-interface Block {
+export interface Block {
     address: number[];
     piece: Piece | null;
 }
 
-interface Player {
+export interface Player {
     name: string;
     pieces: Piece[];
 }
 
-interface BoardProps {
+export interface BoardProps {
     initialData: any;
 }
 
@@ -43,7 +44,7 @@ const BoardRow: React.FC<{row: Block[], handleBlockClick: Function}> = ({row, ha
 
 const Board: React.FC<BoardProps> = ({initialData}) => {
     const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
-    const [board, setBoard] = useState<Block[][]>(initialBoard);
+    const [boardInfo, setBoardInfo] = useState<Block[][]>(initialBoard);
     const [playerUnsetPieces, setPlayerPieces] = useState<Piece[][]>([initialData.players[0].pieces, initialData.players[1].pieces]);
 
     const handlePieceClick = (piece: Piece) => {
@@ -53,11 +54,20 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
     const handleBlockClick = (block: Block) => {
         if (!selectedPiece) return;
         if (block.piece) return;
-        setBoard(board => board.map(row => row.map(b => b === block ? { ...b, piece: selectedPiece } : b)));
+        let pieceOfPositionUpdated = {...selectedPiece, position: block.address}
+        setBoardInfo(board => board.map(row => row.map(b => b === block ? { ...b, piece:  pieceOfPositionUpdated} : b)));
         setPlayerPieces(playerUnsetPieces => playerUnsetPieces.map(pieces => pieces.filter(p => p !== selectedPiece)));
         setSelectedPiece(null);
     }
-    
+
+    React.useEffect(() => {
+        const allPiecesSet = playerUnsetPieces.every(pieces => pieces.length === 0);
+        if (allPiecesSet){
+            console.log('all pieces set')
+            console.log(boardInfo)
+            ApiGateway.notifyGetReady(boardInfo);
+        }
+    })
 
     return (
         <div className={styles.container}>
@@ -66,7 +76,7 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
                 <PieceDisplay pieces={playerUnsetPieces[0]} player={initialData.players[0]} handlePieceClick={handlePieceClick} />
             </div>
             <div className={styles.board}>
-                {board.map((row, row_i) => (
+                {boardInfo.map((row, row_i) => (
                     <BoardRow key={'row' + row_i} row={row} handleBlockClick={handleBlockClick} />
                 ))}
             </div>
