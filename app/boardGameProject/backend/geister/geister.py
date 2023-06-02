@@ -70,11 +70,11 @@ class Player:
         )
         self.__picked_red_pieces_count: int = 0
         self.__picked_blue_pieces_count: int = 0
-    
+
     @property
     def picked_blue_pieces_count(self) -> int:
         return self.__picked_blue_pieces_count
-    
+
     @property
     def picked_red_pieces_count(self) -> int:
         return self.__picked_red_pieces_count
@@ -238,9 +238,7 @@ class Table:
 
     def _is_escapable(self, player: Player) -> bool:
         for position in self.__escapable_positions[player]:
-            piece: Optional[Piece] = self.__table[position[0]][
-                position[1]
-            ].get_piece()
+            piece: Optional[Piece] = self.__table[position[0]][position[1]].get_piece()
             if piece is None:
                 return False
             if (
