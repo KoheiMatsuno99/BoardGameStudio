@@ -35,17 +35,24 @@ def get_ready(request: Request) -> Response:
             {"detail": "Session data not found"}, status=status.HTTP_400_BAD_REQUEST
         )
     new_table_data = request.data
-    print("----------")
-    print("----------")
-    print("new_request_data is following this")
-    print("----------")
-    print(f"{new_table_data}")
-    print("----------")
-    print("----------")
-    table_serializer = TableSerializer(data=current_table_data)
+    if isinstance(new_table_data, list):
+        new_table_data = {
+            "players": current_table_data.get("players"),
+            "winner": current_table_data.get("winner", ""),
+            "table": new_table_data
+        }
+    print(new_table_data)
+    table_serializer = TableSerializer(data=new_table_data)
     if table_serializer.is_valid():
         updated_table = table_serializer.save()
         request.session["table"] = TableSerializer(updated_table).data
+        print("----------")
+        print("----------")
+        print("updated table data is following this;")
+        print("----------")
+        print(request.session["table"])
+        print("----------")
+        print("----------")
         return Response(request.session["table"], status=status.HTTP_200_OK)
     else:
         return Response(table_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
