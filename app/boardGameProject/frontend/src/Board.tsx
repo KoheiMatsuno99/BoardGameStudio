@@ -18,6 +18,12 @@ export interface Player {
     pieces: Piece[];
 }
 
+export interface Table{
+    players: Player[],
+    winner: string,
+    table: Block[][]
+}
+
 export interface BoardProps {
     initialData: any;
 }
