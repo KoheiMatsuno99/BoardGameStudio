@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ApiGateway } from "./BoardController";
 
 export interface Piece {
     owner: string;
@@ -36,15 +37,26 @@ const useBoardState = (initialData: Table) => {
     const [boardInfo, setBoardInfo] = useState<Block[][]>(initialBoard);
     const [playerUnsetPieces, setPlayerPieces] = useState<Piece[][]>([initialData.players[0].pieces, initialData.players[1].pieces]);
     const [players, setPlayers] = useState<Player[]>(initialData.players);
+    const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
 
     const handlePieceClick = (piece: Piece) => {
         setSelectedPiece(piece);
     }
 
-    const handleBlockClick = (block: Block) => {
-        if (!selectedPiece) return;
-        if (block.piece) return;
+    const handleInitialPlacement = (block: Block) => {
+        if (!selectedPiece){
+            alert("既に選択済みのコマがあります。選択したコマを配置してください。")
+            return;
+        }
+        if (block.piece){
+            alert("そのマスにはコマがすでに存在します");
+            return;
+        }
         const playerIndex = players.findIndex(player => player.name === selectedPiece.owner);
+        if(playerIndex === -1){
+            alert("そのコマはすでに配置されています。残りのコマを配置してください。");
+            return;
+        }
         const validPlacementRange = [
             {"rowStart": 0, "rowEnd": 1, "colStart": 0, "colEnd": 7},
             {"rowStart": 6, "rowEnd": 7, "colStart": 0, "colEnd": 7},
@@ -72,6 +84,34 @@ const useBoardState = (initialData: Table) => {
         })));
         setSelectedPiece(null);
     }
+
+    const handleMovement = (block: Block) => {
+        if(selectedPiece === null){
+            alert("コマを選択してください");
+            return;
+        }
+        if(block.piece?.owner){
+            alert("そのマスにはコマがすでに存在します");
+            return;
+        }
+        let pieceOfPositionUpdated = {...selectedPiece, position: block.address}
+        setBoardInfo(board => board.map(row => row.map(b => b === block ? { ...b, piece:  pieceOfPositionUpdated} : b)));
+        setPlayers(players => players.map(player => ({
+            ...player,
+            pieces: player.pieces.map(piece => piece === selectedPiece ? pieceOfPositionUpdated : piece)
+        })));
+        setSelectedPiece(null);
+        //ApiGateway.movePiece(player, piece, block.address)
+    }
+
+    const handleBlockClick = (block: Block) => {
+        if(isGameStarted){
+            handleMovement(block);
+        }
+        else{
+            handleInitialPlacement(block);
+        }
+    }
     return {
         selectedPiece,
         setSelectedPiece,
@@ -82,7 +122,9 @@ const useBoardState = (initialData: Table) => {
         players,
         setPlayers,
         handlePieceClick,
-        handleBlockClick
+        handleBlockClick,
+        isGameStarted,
+        setIsGameStarted
     };
 };
 
