@@ -12,11 +12,16 @@ const PieceDisplay: React.FC<{pieces: Piece[], player: Player, handlePieceClick:
     </div>
 );
 
-const BoardRow: React.FC<{row: Block[], handleBlockClick: Function}> = ({row, handleBlockClick}) => (
+const BoardRow: React.FC<{row: Block[], handleBlockClick: Function, handlePieceClick: Function}> = ({row, handleBlockClick, handlePieceClick}) => (
     <div className={styles.row}>
         {row.map((square, col_i) => (
             <div key={'col' + col_i} className={styles.block} onClick={() => handleBlockClick(square)}>
-                {square.piece && <img src={`../img/${square.piece.type}Ghost.jpeg`} className={styles.ghostImgSmall} />}
+                {square.piece && <img src={`../img/${square.piece.type}Ghost.jpeg`} className={styles.ghostImgSmall} onClick={
+                    (event) => {
+                        event.stopPropagation();
+                        handlePieceClick(square);
+                    }
+                }/>}
             </div>
         ))}
     </div>
@@ -29,12 +34,14 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
         playerUnsetPieces,
         players,
         handlePieceClick,
-        handleBlockClick
+        handleBlockClick,
+        isGameStarted,
+        setIsGameStarted
     } = useBoardState(initialData);
 
     React.useEffect(() => {
         const allPiecesSet = playerUnsetPieces.every(pieces => pieces.length === 0);
-        if (allPiecesSet){
+        if (allPiecesSet && !isGameStarted){
             console.log('all pieces set')
             const gameData: Table = {
                 players: players,
@@ -43,6 +50,7 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
             }
             console.log(gameData);
             ApiGateway.notifyGetReady(gameData);
+            setIsGameStarted(true);
         }
     })
 
@@ -54,7 +62,7 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
             </div>
             <div className={styles.board}>
                 {boardInfo.map((row, row_i) => (
-                    <BoardRow key={'row' + row_i} row={row} handleBlockClick={handleBlockClick} />
+                    <BoardRow key={'row' + row_i} row={row} handleBlockClick={handleBlockClick} handlePieceClick={handlePieceClick}/>
                 ))}
             </div>
             <div className={styles.capturedPiecesBottom}>
