@@ -2,12 +2,13 @@ import React from "react";
 import styles from "./GeisterRule.module.css";
 import Lobby from "./Lobby";
 import Board from "./Board";
+import { Table } from "./BoardState";
 import { ApiGateway } from "./BoardController";
 
 const GeisterRule: React.FC = () => {
     const [doesGoBack, setGoback] = React.useState(false);
     const [doesPlay, setPlay] = React.useState(false);
-    const [initialTable, setInitialTable] = React.useState(null);
+    const [initialTable, setInitialTable] = React.useState<Table | null>(null);
     const handleGoback = () => {
         setGoback(true);
     }
@@ -20,6 +21,9 @@ const GeisterRule: React.FC = () => {
         return <Lobby />
     }
     if (doesPlay) {
+        if(initialTable === null){
+            throw new Error("initialTable is null"); 
+        }
         return <Board initialData={initialTable} />
     }
     return (

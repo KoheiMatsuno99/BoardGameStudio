@@ -1,4 +1,4 @@
-import {Block} from './Board';
+import {Table} from './BoardState';
 import axios from 'axios';
 
 export class ApiGateway{
@@ -19,9 +19,9 @@ export class ApiGateway{
         const response = await axios.post('http://localhost:8000/start/', playerData, { withCredentials: true })
         return response.data;
     }
-    public static async notifyGetReady(boardInfo: Block[][]){
+    public static async notifyGetReady(tableInfo: Table){
         //全てのコマの初期位置が確定したらコマの位置情報をサーバーに送信する          
-        const response = await axios.post('http://localhost:8000/setup/',boardInfo, {withCredentials: true});
+        const response = await axios.post('http://localhost:8000/setup/',tableInfo, {withCredentials: true});
         console.log(response)
         return response.data;
     }
