@@ -22,5 +22,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("start/", start_game, name="start"),
     path("setup/", get_ready, name="setup"),
-    path("move_piece/", move_piece, name="move_piece"),
+    path("movement/", move_piece, name="movement"),
 ]
