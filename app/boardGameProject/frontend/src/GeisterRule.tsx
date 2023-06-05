@@ -28,7 +28,7 @@ const GeisterRule: React.FC = () => {
     }
     return (
         <div className={styles.container}>
-            <div>
+            <div className={styles.textColor}>
                 <h1>ガイスターのルール</h1>
                 <p>ガイスターは、2人で遊ぶボードゲームです。</p>
                 <p>ゲームの目的は、相手のゴーストを捕まえることです。</p>

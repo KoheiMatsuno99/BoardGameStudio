@@ -17,6 +17,10 @@
     font-size: medium;
 }
 
+.textColor{
+    color: white;
+}
+
 /* For smartphones */
 @media screen and (max-height: 750px) {
     .container{
