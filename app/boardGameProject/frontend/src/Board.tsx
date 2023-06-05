@@ -1,34 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./Board.module.css";
 import { ApiGateway } from "./BoardController";
-
-export interface Piece {
-    owner: string;
-    type: string;
-    position: number[];
-}
-
-export interface Block {
-    address: number[];
-    piece: Piece | null;
-}
-
-export interface Player {
-    name: string;
-    pieces: Piece[];
-}
-
-export interface Table{
-    players: Player[],
-    winner: string,
-    table: Block[][]
-}
-
-export interface BoardProps {
-    initialData: any;
-}
-
-const initialBoard: Block[][] = Array.from({ length: 8 }, (_, i) => Array.from({ length: 8 }, (_, j) => ({ address: [i, j], piece: null })));
+import { Table, Player, Piece, Block, BoardProps } from "./BoardState";
+import useBoardState from "./BoardState";
 
 const PieceDisplay: React.FC<{pieces: Piece[], player: Player, handlePieceClick: Function}> = ({pieces, player, handlePieceClick}) => (
     <div className={styles.dFlex}>
@@ -49,29 +23,26 @@ const BoardRow: React.FC<{row: Block[], handleBlockClick: Function}> = ({row, ha
 );
 
 const Board: React.FC<BoardProps> = ({initialData}) => {
-    const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
-    const [boardInfo, setBoardInfo] = useState<Block[][]>(initialBoard);
-    const [playerUnsetPieces, setPlayerPieces] = useState<Piece[][]>([initialData.players[0].pieces, initialData.players[1].pieces]);
-
-    const handlePieceClick = (piece: Piece) => {
-        setSelectedPiece(piece);
-    }
-
-    const handleBlockClick = (block: Block) => {
-        if (!selectedPiece) return;
-        if (block.piece) return;
-        let pieceOfPositionUpdated = {...selectedPiece, position: block.address}
-        setBoardInfo(board => board.map(row => row.map(b => b === block ? { ...b, piece:  pieceOfPositionUpdated} : b)));
-        setPlayerPieces(playerUnsetPieces => playerUnsetPieces.map(pieces => pieces.filter(p => p !== selectedPiece)));
-        setSelectedPiece(null);
-    }
+    const {
+        selectedPiece,
+        boardInfo,
+        playerUnsetPieces,
+        players,
+        handlePieceClick,
+        handleBlockClick
+    } = useBoardState(initialData);
 
     React.useEffect(() => {
         const allPiecesSet = playerUnsetPieces.every(pieces => pieces.length === 0);
         if (allPiecesSet){
             console.log('all pieces set')
+            const gameData: Table = {
+                players: players,
+                winner: "",
+                table: boardInfo
+            }
             console.log(boardInfo)
-            ApiGateway.notifyGetReady(boardInfo);
+            ApiGateway.notifyGetReady(gameData);
         }
     })
 
