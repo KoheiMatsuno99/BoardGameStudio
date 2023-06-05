@@ -41,7 +41,7 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
                 winner: "",
                 table: boardInfo
             }
-            console.log(boardInfo)
+            console.log(gameData);
             ApiGateway.notifyGetReady(gameData);
         }
     })
