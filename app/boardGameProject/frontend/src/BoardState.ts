@@ -56,11 +56,11 @@ const useBoardState = (initialData: Table) => {
             return;
         }
         else if(playerIndex === 0 && selectedRow === rowStart && (selectedCol === colStart || selectedCol === colEnd)){
-            alert("脱出マスを初期位置に設定することはできません")
+            alert("相手プレイヤーの脱出マスを初期位置に設定することはできません")
             return;
         }
         else if(playerIndex === 1 && selectedRow === rowEnd && (selectedCol === colStart || selectedCol === colEnd)){
-            alert("脱出マスを初期位置に設定することはできません")
+            alert("相手プレイヤーの脱出マスを初期位置に設定することはできません")
             return;
         }
         let pieceOfPositionUpdated = {...selectedPiece, position: block.address}
