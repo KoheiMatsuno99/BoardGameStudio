@@ -20,7 +20,8 @@ export interface Player {
 export interface Table{
     players: Player[],
     winner: string,
-    table: Block[][]
+    table: Block[][],
+    turn: number
 }
 
 export interface BoardProps {
@@ -100,8 +101,8 @@ const useBoardState = (initialData: Table) => {
             ...player,
             pieces: player.pieces.map(piece => piece === selectedPiece ? pieceOfPositionUpdated : piece)
         })));
+        ApiGateway.movePiece(players, selectedPiece, block)
         setSelectedPiece(null);
-        //ApiGateway.movePiece(player, piece, block.address)
     }
 
     const handleBlockClick = (block: Block) => {

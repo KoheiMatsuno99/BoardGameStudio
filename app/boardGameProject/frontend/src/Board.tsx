@@ -46,7 +46,8 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
             const gameData: Table = {
                 players: players,
                 winner: "",
-                table: boardInfo
+                table: boardInfo,
+                turn: 0
             }
             console.log(gameData);
             ApiGateway.notifyGetReady(gameData);
