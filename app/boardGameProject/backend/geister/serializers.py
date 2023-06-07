@@ -53,6 +53,12 @@ class PlayerSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)
         instance.pieces = validated_data.get("pieces", instance.pieces)
+        instance.picked_blue_pieces_count = validated_data.get(
+            "picked_blue_pieces_count", instance.picked_blue_pieces_count
+        )
+        instance.picked_red_pieces_count = validated_data.get(
+            "picked_red_pieces_count", instance.picked_red_pieces_count
+        )
         return instance
 
 
@@ -60,6 +66,10 @@ class TableSerializer(serializers.Serializer):
     players = serializers.ListField(child=PlayerSerializer())
     winner = serializers.CharField(allow_blank=True)
     table = serializers.ListField(child=serializers.ListField(child=BlockSerializer()))
+    turn = serializers.IntegerField(min_value=0, max_value=1)
+
+    def get_turn(self, obj: Table) -> int:
+        return obj.get_turn()
 
     def create(self, validated_data) -> Table:
         players_data = validated_data.pop("players", [])
@@ -70,6 +80,7 @@ class TableSerializer(serializers.Serializer):
                 players.append(player_serializer.save())
         validated_data.pop("winner", None)
         validated_data.pop("table", None)
+        validated_data.pop("turn", None)
         return Table(players=players, **validated_data)
 
     def update(self, instance, validated_data):

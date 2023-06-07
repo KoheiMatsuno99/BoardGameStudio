@@ -111,6 +111,7 @@ class Table:
             self.__players[0]: [(0, 0), (0, 7)],
             self.__players[1]: [(7, 0), (7, 7)],
         }
+        self.__turn: int = 0
 
     @property
     def players(self) -> list[Player]:
@@ -124,6 +125,10 @@ class Table:
     def table(self) -> list[list[Block]]:
         return self.__table
 
+    @property
+    def turn(self) -> int:
+        return self.__turn
+
     def get_players(self) -> list[Player]:
         return self.__players
 
@@ -132,6 +137,12 @@ class Table:
 
     def get_winner(self) -> str:
         return self.__winner
+
+    def get_turn(self) -> int:
+        return self.__turn
+
+    def switch_turn(self) -> None:
+        self.__turn = 1 if self.__turn == 0 else 0
 
     # 各プレイヤーがコマの初期位置を決定するメソッド
     def initialize_pieces_position(self) -> None:
