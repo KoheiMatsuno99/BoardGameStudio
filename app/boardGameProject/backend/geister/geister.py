@@ -3,13 +3,24 @@ from typing import Optional
 
 
 class Piece:
-    def __init__(self, OWNER: str, TYPE: str) -> None:
-        self.__owner = OWNER
-        self.__type = TYPE
+    def __init__(self, owner: str, type: str) -> None:
+        self.__owner = owner
+        self.__type = type
         self.__position: Optional[list[int]] = None
-        assert TYPE in {"red", "blue"}, "Type must be either 'red' or 'blue'."
+        assert type in {"red", "blue"}, "Type must be either 'red' or 'blue'."
 
     # ownerはPlayer.nameと紐づくことを想定しているが、オンラインモードで名前が衝突した時、バグの可能性あり
+    @property
+    def owner(self) -> str:
+        return self.__owner
+
+    @property
+    def type(self) -> str:
+        return self.__type
+
+    @property
+    def position(self) -> Optional[list[int]]:
+        return self.__position
 
     def get_owner(self) -> str:
         return self.__owner
@@ -30,12 +41,12 @@ class Piece:
 
 
 class Block:
-    def __init__(self, ADDRESS: list[int]) -> None:
-        if ADDRESS[0] not in range(0, 8):
+    def __init__(self, address: list[int]) -> None:
+        if address[0] not in range(0, 8):
             raise ValueError("Address x must be in range(0, 8)")
-        if ADDRESS[1] not in range(0, 8):
+        if address[1] not in range(0, 8):
             raise ValueError("Address y must be in range(0, 8)")
-        self.__address = ADDRESS
+        self.__address = address
         self.__piece: Optional[Piece] = None
 
     @property
@@ -144,10 +155,9 @@ class Table:
     def switch_turn(self) -> None:
         self.__turn = 1 if self.__turn == 0 else 0
 
-    # 各プレイヤーがコマの初期位置を決定するメソッド
+    # CPUがコマの初期位置を決定するメソッド
     def initialize_pieces_position(self) -> None:
         for i in range(len(self.__players)):
-            # 仮置き 今は全てのプレイヤーのコマをランダムに配置する
             # オフラインモード時のCPUは初期位置をランダムに決定
             # todo プレイヤーは手動で初期位置を決定するようにする
             # todo オンラインモードでは二人のプレイヤーがそれぞれ手動で初期位置を決定する

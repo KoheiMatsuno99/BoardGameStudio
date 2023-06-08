@@ -1,14 +1,34 @@
+from typing import Optional
 from rest_framework import serializers
-
-from .geister import Player, Table
+from .geister import Player, Table, Piece, Block
 
 
 class PieceSerializer(serializers.Serializer):
     owner = serializers.CharField()
     type = serializers.CharField()
-    position = serializers.ListField(
-        child=serializers.IntegerField(min_value=0, max_value=7)
-    )
+    # owner = serializers.SerializerMethodField()
+    # type = serializers.SerializerMethodField()
+    # position = serializers.ListField(
+    #     child=serializers.IntegerField(min_value=0, max_value=7)
+    # )
+    position = serializers.SerializerMethodField()
+
+    def create(self, validated_data) -> Piece:
+        return Piece(**validated_data)
+
+    def update(self, instance, validated_data):
+        print("update PieceSerializer")
+        instance.position = validated_data.get("position", instance.position)
+        return instance
+
+    def get_owner(self, obj: Piece) -> str:
+        return obj.get_owner()
+
+    def get_type(self, obj: Piece) -> str:
+        return obj.get_type()
+
+    def get_position(self, obj: Piece) -> Optional[list[int]]:
+        return obj.get_position()
 
 
 class BlockSerializer(serializers.Serializer):
@@ -16,6 +36,10 @@ class BlockSerializer(serializers.Serializer):
         child=serializers.IntegerField(min_value=0, max_value=7)
     )
     piece = PieceSerializer(allow_null=True)
+
+    def create(self, validated_data) -> Block:
+        validated_data.pop("piece", None)
+        return Block(**validated_data)
 
     def update(self, instance, validated_data):
         instance.address = validated_data.get("address", instance.address)
