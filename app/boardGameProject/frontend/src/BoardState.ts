@@ -15,6 +15,8 @@ export interface Block {
 export interface Player {
     name: string;
     pieces: Piece[];
+    pickedBluePiecesCount: number,
+    pickedRedPiecesCount: number
 }
 
 export interface Table{
