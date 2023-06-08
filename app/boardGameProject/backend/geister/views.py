@@ -68,19 +68,22 @@ def move_piece(request: Request) -> Response:
     if table_data is None:
         return Response({"error": "ゲームが開始されていません"}, status=status.HTTP_400_BAD_REQUEST)
     print("table_data", table_data)
+    print("----------")
     table_selializer = TableSerializer(data=table_data)
+    print("is valid table serializer", table_selializer.is_valid())
     # todo Serializerに渡すデータをlist -> dictにする
     players_data = request.data["players"]
-    if isinstance(players_data, list):
-        players_data = {"player0": players_data[0], "player1": players_data[1]}
-    print("type of players_data", type(players_data))
-    print(players_data)
-    players_serializer = PlayerSerializer(data=players_data)
-
-    player_piece_data = request.data["player_piece"]
+    players_serializer = PlayerSerializer(data=players_data, many=True)
+    print("is valid players_serializer", players_serializer.is_valid())
+    player_piece_data = request.data["player_piece"]["piece"]
     player_piece_serializer = PieceSerializer(data=player_piece_data)
+    print(player_piece_data)
+    print(player_piece_serializer)
+    print("is valid player_piece_serializer", player_piece_serializer.is_valid())
     destination_data = request.data["destination"]
     destination_serializer = BlockSerializer(data=destination_data)
+    print("is valid destination_serializer", destination_serializer.is_valid())
+    print("----------")
     if (
         table_selializer.is_valid()
         and players_serializer.is_valid()
@@ -96,9 +99,14 @@ def move_piece(request: Request) -> Response:
         print(destination, type(destination))
         # players[0]は仮置き
         # Tableクラスにターンを新たなフィールドとして作成
-        current_turn = request.session.get("turn")
+        current_table = request.session.get("table")
+        if current_table is None:
+            return Response(
+                {"error": "ゲームが開始されていません"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        current_turn: int = current_table["turn"]
         print("current_turn", current_turn)
-        table.move(players[0], player_piece, destination)
+        table.move(players[current_turn], player_piece, destination)
         # todo
         # 更新したtableをtable_serializerに渡す
         # 更新したtableをsessionに保存
@@ -109,11 +117,13 @@ def move_piece(request: Request) -> Response:
             status=status.HTTP_400_BAD_REQUEST,
         )
     elif not players_serializer.is_valid():
+        print("players_serializer.errors", players_serializer.errors)
         return Response(
             {"players_serializer": players_serializer.errors},
             status=status.HTTP_400_BAD_REQUEST,
         )
     elif not player_piece_serializer.is_valid():
+        print("player_piece_serializer.errors", player_piece_serializer.errors)
         return Response(
             {"player_piece_serializer": player_piece_serializer.errors},
             status=status.HTTP_400_BAD_REQUEST,
