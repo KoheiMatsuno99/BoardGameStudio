@@ -56,8 +56,9 @@ def get_ready(request: Request) -> Response:
     table_serializer = TableSerializer(data=new_table_data)
     if table_serializer.is_valid():
         updated_table = table_serializer.save()
+        updated_table_serializer = TableSerializer(updated_table)
         request.session["table"] = TableSerializer(updated_table).data
-        return Response(request.session["table"], status=status.HTTP_200_OK)
+        return Response(updated_table_serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(table_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -94,9 +95,9 @@ def move_piece(request: Request) -> Response:
         players: list[Player] = players_serializer.save()
         print(players, type(players))
         player_piece: Piece = player_piece_serializer.save()
-        print(player_piece, type(player_piece))
+        print(player_piece_serializer)
+        print(player_piece.get_owner(), player_piece.get_type(), player_piece.position)
         destination: Block = destination_serializer.save()
-        print(destination, type(destination))
         # players[0]は仮置き
         # Tableクラスにターンを新たなフィールドとして作成
         current_table = request.session.get("table")
@@ -106,11 +107,21 @@ def move_piece(request: Request) -> Response:
             )
         current_turn: int = current_table["turn"]
         print("current_turn", current_turn)
+        print("players[current_turn]", players[current_turn])
+        print("player_piece", player_piece.get_position())
+        print("destination", destination.get_address())
         table.move(players[current_turn], player_piece, destination)
+        print("移動後", player_piece.get_position())
+        table.switch_turn()
         # todo
         # 更新したtableをtable_serializerに渡す
         # 更新したtableをsessionに保存
-        return Response(table_selializer.data, status=status.HTTP_200_OK)
+        updated_table_serializer = TableSerializer(table)
+        request.session["table"] = updated_table_serializer.data
+        print("----------")
+        print(updated_table_serializer.data)
+        print("----------")
+        return Response(updated_table_serializer.data, status=status.HTTP_200_OK)
     elif not table_selializer.is_valid():
         return Response(
             {"table_serializer": table_selializer.errors},

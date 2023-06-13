@@ -3,24 +3,15 @@ from typing import Optional
 
 
 class Piece:
-    def __init__(self, owner: str, type: str) -> None:
+    def __init__(
+        self, owner: str, type: str, position: Optional[list[int]] = None
+    ) -> None:
         self.__owner = owner
         self.__type = type
-        self.__position: Optional[list[int]] = None
+        self.__position: Optional[list[int]] = position
         assert type in {"red", "blue"}, "Type must be either 'red' or 'blue'."
 
     # ownerはPlayer.nameと紐づくことを想定しているが、オンラインモードで名前が衝突した時、バグの可能性あり
-    @property
-    def owner(self) -> str:
-        return self.__owner
-
-    @property
-    def type(self) -> str:
-        return self.__type
-
-    @property
-    def position(self) -> Optional[list[int]]:
-        return self.__position
 
     def get_owner(self) -> str:
         return self.__owner
@@ -38,6 +29,18 @@ class Piece:
     # table[x][y].set_piece()と合わせて使う
     def set_position(self, position: Optional[list[int]]) -> None:
         self.__position = position
+
+    @property
+    def owner(self) -> str:
+        return self.__owner
+
+    @property
+    def type(self) -> str:
+        return self.__type
+
+    @property
+    def position(self) -> Optional[list[int]]:
+        return self.__position
 
 
 class Block:
@@ -82,14 +85,6 @@ class Player:
         self.__picked_red_pieces_count: int = 0
         self.__picked_blue_pieces_count: int = 0
 
-    @property
-    def picked_blue_pieces_count(self) -> int:
-        return self.__picked_blue_pieces_count
-
-    @property
-    def picked_red_pieces_count(self) -> int:
-        return self.__picked_red_pieces_count
-
     def get_name(self) -> str:
         return self.name
 
@@ -110,6 +105,14 @@ class Player:
             self.__picked_red_pieces_count += 1
             print("赤いオバケを取ってしまった...。")
 
+    @property
+    def picked_red_pieces_count(self) -> int:
+        return self.__picked_red_pieces_count
+
+    @property
+    def picked_blue_pieces_count(self) -> int:
+        return self.__picked_blue_pieces_count
+
 
 class Table:
     def __init__(self, players: list[Player]) -> None:
@@ -118,9 +121,9 @@ class Table:
             [Block([x, y]) for y in range(8)] for x in range(8)
         ]
         self.__winner: str = ""
-        self.__escapable_positions = {
-            self.__players[0]: [(0, 0), (0, 7)],
-            self.__players[1]: [(7, 0), (7, 7)],
+        self.__escapable_positions: dict[int, list[tuple[int, int]]] = {
+            0: [(0, 0), (0, 7)],
+            1: [(7, 0), (7, 7)],
         }
         self.__turn: int = 0
 
@@ -129,12 +132,16 @@ class Table:
         return self.__players
 
     @property
+    def table(self) -> list[list[Block]]:
+        return self.__table
+
+    @property
     def winner(self) -> str:
         return self.__winner
 
     @property
-    def table(self) -> list[list[Block]]:
-        return self.__table
+    def escapable_positions(self) -> dict[int, list[tuple[int, int]]]:
+        return self.__escapable_positions
 
     @property
     def turn(self) -> int:
@@ -208,25 +215,29 @@ class Table:
     def move(
         self, player: Player, player_piece: Optional[Piece], destination: Block
     ) -> None:
+        print("----------moving----------")
         if player_piece is None:
             raise ValueError("動かすコマを指定してください")
         if destination is None:
             raise ValueError("移動先を指定してください")
         # 仮置き オンライン対戦時に名前の衝突が起きた場合バグを生む可能性
         # この実装では脱出可能なマスにコマがある場合、次のターンで自動的に勝利になる
-        if self._is_escapable(player):
-            # todo 脱出されるかどうかポップアップを出す
+        if self._is_escapable(self.__turn):
+            # todo 脱出されるに成功したというポップアップを出す
+            print("----------escapable----------")
             self.__winner = player.get_name()
+            # ここでフロントエンドと通信を行う
             return
+        print("----------not escapable----------")
         # 移動先に相手のコマがあれば奪う
         target: Optional[Piece] = destination.get_piece()
         if target is not None and target.get_owner() != player_piece.get_owner():
             self._pick(player, destination)
         # 移動元のブロックからコマを削除
-        curent_position: Optional[list[int]] = player_piece.get_position()
-        if curent_position is None:
+        current_position: Optional[list[int]] = player_piece.get_position()
+        if current_position is None:
             raise ValueError("player_pieceのpositionがNoneです")
-        self.__table[curent_position[0]][curent_position[1]].set_piece(None)
+        self.__table[current_position[0]][current_position[1]].set_piece(None)
         # 移動先のブロックにコマを配置
         destination_position: list[int] = destination.get_address()
         player_piece.set_position(destination_position)
@@ -257,14 +268,16 @@ class Table:
             return False
         return True
 
-    def _is_escapable(self, player: Player) -> bool:
-        for position in self.__escapable_positions[player]:
+    def _is_escapable(self, turn: int) -> bool:
+        for position in self.__escapable_positions[turn]:
             piece: Optional[Piece] = self.__table[position[0]][position[1]].get_piece()
+            print(type(piece))
             if piece is None:
-                return False
+                print("piece is None")
+                continue
             if (
                 piece is not None
-                and piece.get_owner() == player
+                and piece.get_owner() == self.__players[turn].get_name()
                 and piece.get_type() == "blue"
             ):
                 return True

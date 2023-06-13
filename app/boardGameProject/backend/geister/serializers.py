@@ -6,12 +6,9 @@ from .geister import Player, Table, Piece, Block
 class PieceSerializer(serializers.Serializer):
     owner = serializers.CharField()
     type = serializers.CharField()
-    # owner = serializers.SerializerMethodField()
-    # type = serializers.SerializerMethodField()
-    # position = serializers.ListField(
-    #     child=serializers.IntegerField(min_value=0, max_value=7)
-    # )
-    position = serializers.SerializerMethodField()
+    position = serializers.ListField(
+        child=serializers.IntegerField(min_value=0, max_value=7)
+    )
 
     def create(self, validated_data) -> Piece:
         return Piece(**validated_data)
