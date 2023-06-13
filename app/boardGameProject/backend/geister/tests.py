@@ -2,45 +2,191 @@ import pytest
 from .geister import Piece, Table, Player
 
 
+"""
+Tableクラスのis_movable()のテスト
+"""
+
+
+def test_not_movable_separate_block():
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
+    piece1.set_position([3, 3])
+    table[3][3].set_piece(piece1)
+    # 隣接しない位置には移動できない
+    assert not t._is_movable(piece1, table[3][5])
+    assert not t._is_movable(piece1, table[3][1])
+    assert not t._is_movable(piece1, table[1][3])
+    assert not t._is_movable(piece1, table[5][3])
+
+    piece2 = Piece(t.get_players()[0].get_name(), "blue")
+    piece2.set_position([0, 0])
+    table[0][0].set_piece(piece2)
+    # 隣接しない位置には移動できない
+    assert not t._is_movable(piece2, table[2][0])
+    assert not t._is_movable(piece2, table[0][2])
+
+
+def test_not_movable_cross_block():
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
+    piece1.set_position([4, 6])
+    table[4][6].set_piece(piece1)
+    # 斜めには移動できない
+    assert not t._is_movable(piece1, table[3][5])
+    assert not t._is_movable(piece1, table[5][7])
+    assert not t._is_movable(piece1, table[5][5])
+    assert not t._is_movable(piece1, table[3][7])
+
+    piece2 = Piece(t.get_players()[0].get_name(), "blue")
+    piece2.set_position([0, 0])
+    table[0][0].set_piece(piece2)
+    # 斜めには移動できない
+    assert not t._is_movable(piece2, table[1][1])
+
+
+def test_not_movable_same_block():
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
+    piece1.set_position([4, 6])
+    table[4][6].set_piece(piece1)
+    # 同じ場所には移動できない
+    assert not t._is_movable(piece1, table[4][6])
+
+    piece2 = Piece(t.get_players()[0].get_name(), "blue")
+    piece2.set_position([0, 0])
+    table[0][0].set_piece(piece2)
+    # 同じ場所には移動できない
+    assert not t._is_movable(piece2, table[0][0])
+
+
+def test_not_movable_block_with_my_piece():
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
+    piece1.set_position([4, 6])
+    table[4][6].set_piece(piece1)
+    piece2 = Piece(t.get_players()[0].get_name(), "blue")
+    piece2.set_position([4, 5])
+    table[4][5].set_piece(piece2)
+    # 移動先に自分のコマがある場合は移動できない
+    assert not t._is_movable(piece1, table[4][5])
+
+
+def test_is_moveable_block_with_opponent_piece():
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
+    piece1.set_position([4, 6])
+    table[4][6].set_piece(piece1)
+    piece2 = Piece(t.get_players()[1].get_name(), "blue")
+    piece2.set_position([4, 5])
+    table[4][5].set_piece(piece2)
+    # 移動先に相手のコマがある場合は移動できる
+    assert t._is_movable(piece1, table[4][5])
+
+    piece3 = Piece(t.get_players()[0].get_name(), "red")
+    piece3.set_position([0, 0])
+    table[0][0].set_piece(piece3)
+    piece4 = Piece(t.get_players()[1].get_name(), "blue")
+    piece4.set_position([0, 1])
+    table[0][1].set_piece(piece4)
+    # 移動先に相手のコマがある場合は移動できる
+    assert t._is_movable(piece3, table[0][1])
+
+
 def test_is_movable():
     t = Table([Player("test1"), Player("test2")])
     table = t.get_table()
-    piece1 = Piece(t.get_players()[0], "blue")
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
     piece1.set_position([0, 0])
     table[0][0].set_piece(piece1)
-    # todo 青いオバケが脱出する場合は同じ位置を指定することで脱出可能
-    # assert t._is_movable(piece1, Block([0, 0]))
-    # 隣接しない位置には移動できない
-    assert not t._is_movable(piece1, table[2][0])
-    assert not t._is_movable(piece1, table[0][2])
-    # 斜めには移動できない
-    assert not t._is_movable(piece1, table[1][1])
-    # 縦横1マスの位置には移動できる
+    # 隣接する位置かつ目的地にコマがない場合は移動できる
     assert t._is_movable(piece1, table[0][1])
     assert t._is_movable(piece1, table[1][0])
-    piece2 = Piece(t.get_players()[0], "red")
-    piece2.set_position([7, 1])
-    # 同じ場所には移動できない
-    assert not t._is_movable(piece2, table[7][1])
-    piece3 = Piece(t.get_players()[0], "blue")
-    # 移動先に自分のコマがある場合は移動できない
-    piece3.set_position([6, 1])
-    block2 = table[7][1]
-    block2.set_piece(piece2)
-    assert not t._is_movable(piece3, table[7][1])
 
 
-def test_is_escapable():
+"""
+Table._is_escapable()のテスト
+"""
+
+
+def test_not_escapable_block_of_oppenent_on_my_piece():
+    """
+    プレイヤー0の脱出マスは[0, 0], [0, 7]
+    プレイヤー1の脱出マスは[7, 0], [7, 7]
+    """
+    # 自分の脱出マスに自分のコマがない
+    # かつ、相手の脱出マスに自分のコマがある場合は脱出できない
     t = Table([Player("test1"), Player("test2")])
     table = t.get_table()
-    assert not t._is_escapable(t.get_players()[0])
-    table[0][7].set_piece(Piece(t.get_players()[0], "red"))
-    assert not t._is_escapable(t.get_players()[0])
-    table[7][0].set_piece(Piece(t.get_players()[0], "blue"))
-    assert not t._is_escapable(t.get_players()[0])
-    table[0][0].set_piece(Piece(t.get_players()[0], "blue"))
-    assert t._is_escapable(t.get_players()[0])
-    assert not t._is_escapable(t.get_players()[1])
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
+    piece1.set_position([7, 0])
+    table[7][0].set_piece(piece1)
+    assert not t._is_escapable(0)
+
+    piece2 = Piece(t.get_players()[1].get_name(), "blue")
+    piece2.set_position([0, 0])
+    table[0][0].set_piece(piece2)
+    assert not t._is_escapable(1)
+
+
+def test_not_escapable_block_of_mine_on_my_red_piece():
+    """
+    プレイヤー0の脱出マスは[0, 0], [0, 7]
+    プレイヤー1の脱出マスは[7, 0], [7, 7]
+    """
+    # 自分の脱出マスにコマがあっても赤いコマであれば脱出できない
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    piece1 = Piece(t.get_players()[0].get_name(), "red")
+    piece1.set_position([0, 0])
+    table[0][0].set_piece(piece1)
+    assert not t._is_escapable(0)
+
+    piece2 = Piece(t.get_players()[0].get_name(), "red")
+    piece2.set_position([0, 7])
+    table[0][7].set_piece(piece2)
+    assert not t._is_escapable(0)
+
+    piece3 = Piece(t.get_players()[1].get_name(), "red")
+    piece3.set_position([7, 0])
+    table[7][0].set_piece(piece3)
+    assert not t._is_escapable(1)
+
+    piece4 = Piece(t.get_players()[1].get_name(), "red")
+    piece4.set_position([7, 7])
+    table[7][7].set_piece(piece4)
+    assert not t._is_escapable(1)
+
+
+def test_is_escapable_block_of_mine_on_my_blue_piece():
+    """
+    プレイヤー0の脱出マスは[0, 0], [0, 7]
+    プレイヤー1の脱出マスは[7, 0], [7, 7]
+    """
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
+    piece1.set_position([0, 0])
+    table[0][0].set_piece(piece1)
+    # 自分の脱出マスに青いコマがあれば脱出可能
+    assert t._is_escapable(0)
+    # 脱出可能なコマがあれば他の脱出マスに赤いコマがあっても問題ない
+    piece2 = Piece(t.get_players()[0].get_name(), "red")
+    piece2.set_position([0, 7])
+    table[0][7].set_piece(piece2)
+    # piece2は脱出不可だが、piece1が脱出可能なのでTrue
+    assert t._is_escapable(0)
+    # プレイヤー0は脱出条件を満たしているが、プレイヤー1は満たしていないのでFalse
+    assert not t._is_escapable(1)
+
+
+"""
+Tableクラスの_pick()のテスト
+"""
 
 
 def test_pick_with_empty_destination():
@@ -130,39 +276,44 @@ def test_pick_with_last_red_piece():
     assert table.get_winner() == player2.get_name()
 
 
-def test_move():
+"""
+Tableクラスのmove()のテスト
+"""
+
+
+def test_move_no_piece_on_destination():
+    # 移動先にコマがない場合の挙動をテスト
     t = Table([Player("test1"), Player("test2")])
     table = t.get_table()
-    piece1 = Piece(t.get_players()[0], "blue")
-    piece1.set_position([0, 0])
-    table[0][0].set_piece(piece1)
-    with pytest.raises(ValueError):
-        t.move(t.get_players()[0], None, table[0][1])
-    with pytest.raises(ValueError):
-        t.move(t.get_players()[0], piece1, None)
-    t.move(t.get_players()[0], piece1, table[0][1])
-    assert t.get_winner() == t.get_players()[0].get_name()
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
+    piece1.set_position([5, 3])
+    table[5][3].set_piece(piece1)
+    " [5, 3] -> [5, 4]に移動"
+    t.move(t.get_players()[0], piece1, table[5][4])
+    # [5, 3]にはもういないこと
+    assert table[5][3].get_piece() is None
+    # [5, 4]にいること
+    assert table[5][4].get_piece() == piece1
+    assert piece1.get_position() == [5, 4]
 
-    piece2 = Piece(t.get_players()[1], "blue")
-    piece2.set_position([5, 1])
-    table[5][1].set_piece(piece2)
-    t.move(t.get_players()[1], piece2, table[5][2])
-    assert table[5][1].get_piece() is None
-    assert piece2.get_position() == [5, 2]
-    assert table[5][2].get_piece() == piece2
 
-    piece3 = Piece(t.get_players()[1], "red")
-    piece3.set_position([2, 5])
-    table[2][5].set_piece(piece3)
-    piece4 = Piece(t.get_players()[0], "red")
-    piece4.set_position([3, 5])
-    table[3][5].set_piece(piece4)
-    t.move(t.get_players()[1], piece3, table[3][5])
-    assert piece4 not in t.get_players()[0].pieces.values()
-    assert table[2][5].get_piece() is None
-    assert piece3.get_position() == [3, 5]
-
-    piece5 = Piece(t.get_players()[1], "red")
-    piece5.set_position(None)
-    with pytest.raises(ValueError):
-        t.move(t.get_players()[1], piece5, table[3][1])
+def test_move_oppenent_piece_on_destination():
+    # 移動先に相手のコマがある場合の挙動をテスト
+    t = Table([Player("test1"), Player("test2")])
+    table = t.get_table()
+    piece1 = Piece(t.get_players()[0].get_name(), "blue")
+    piece1.set_position([5, 3])
+    table[5][3].set_piece(piece1)
+    piece2 = Piece(t.get_players()[1].get_name(), "red")
+    piece2.set_position([5, 4])
+    table[5][4].set_piece(piece2)
+    " [5, 3] -> [5, 4]に移動"
+    t.move(t.get_players()[0], piece1, table[5][4])
+    # [5, 3]にはもういないこと
+    assert table[5][3].get_piece() is None
+    # [5, 4]にいること
+    assert table[5][4].get_piece() == piece1
+    assert piece1.get_position() == [5, 4]
+    # 相手のコマが取られていること
+    assert piece2.get_position() is None
+    assert piece2 not in t.get_players()[1].pieces.values()
