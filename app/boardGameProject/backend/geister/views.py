@@ -39,13 +39,6 @@ def get_ready(request: Request) -> Response:
             {"detail": "Session data not found"}, status=status.HTTP_400_BAD_REQUEST
         )
     new_table_data = request.data
-    if isinstance(new_table_data, list):
-        new_table_data = {
-            "players": current_table_data.get("players"),
-            "winner": current_table_data.get("winner", ""),
-            "table": new_table_data,
-            "turn": current_table_data.get("turn"),
-        }
     print("----------")
     print("----------")
     print("new data is following this;")
@@ -53,6 +46,11 @@ def get_ready(request: Request) -> Response:
     print(new_table_data)
     print("----------")
     print("----------")
+    # 以下の問題がある
+    # 1. table_serializerのplayerフィールドのpiecesのpositionがNoneになっている
+    # 2. table_serializerのtableフィールドの各Blockのpieceが全てNoneになっている
+    # new_table_dataでは期待通りのデータのため、リクエストには問題なし
+    # todo TableSerializerの修正が必要
     table_serializer = TableSerializer(data=new_table_data)
     if table_serializer.is_valid():
         updated_table = table_serializer.save()
