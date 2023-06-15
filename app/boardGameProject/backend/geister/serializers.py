@@ -47,8 +47,12 @@ class BlockSerializer(serializers.Serializer):
 class PlayerSerializer(serializers.Serializer):
     name = serializers.CharField()
     pieces = serializers.SerializerMethodField()
-    picked_blue_pieces_count = serializers.IntegerField(min_value=0, max_value=4, required=False)
-    picked_red_pieces_count = serializers.IntegerField(min_value=0, max_value=4, required=False)
+    picked_blue_pieces_count = serializers.IntegerField(
+        min_value=0, max_value=4, required=False
+    )
+    picked_red_pieces_count = serializers.IntegerField(
+        min_value=0, max_value=4, required=False
+    )
 
     def get_pieces(self, obj: Player) -> list[dict]:
         return [

@@ -115,7 +115,9 @@ class Player:
 
 
 class Table:
-    def __init__(self, players: list[Player], table: Optional[list[list[Block]]] = None) -> None:
+    def __init__(
+        self, players: list[Player], table: Optional[list[list[Block]]] = None
+    ) -> None:
         self.__players = players
         # self.__table: list[list[Block]] = [
         #     # ここでBlockクラスのインスタンスを作成している
@@ -123,7 +125,11 @@ class Table:
         #     # 初期化をしない（代わりの関数を呼び出す）か、初期化の時にpieceを設定する必要がある
         #     [Block([x, y]) for y in range(8)] for x in range(8)
         # ]
-        self.__table = [[Block([x, y]) for y in range(8)] for x in range(8)] if table is None else table
+        self.__table = (
+            [[Block([x, y]) for y in range(8)] for x in range(8)]
+            if table is None
+            else table
+        )
         self.__winner: str = ""
         self.__escapable_positions: dict[int, list[tuple[int, int]]] = {
             0: [(0, 0), (0, 7)],
