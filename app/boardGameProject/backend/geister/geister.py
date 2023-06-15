@@ -44,13 +44,13 @@ class Piece:
 
 
 class Block:
-    def __init__(self, address: list[int]) -> None:
+    def __init__(self, address: list[int], piece: Optional[Piece] = None) -> None:
         if address[0] not in range(0, 8):
             raise ValueError("Address x must be in range(0, 8)")
         if address[1] not in range(0, 8):
             raise ValueError("Address y must be in range(0, 8)")
         self.__address = address
-        self.__piece: Optional[Piece] = None
+        self.__piece: Optional[Piece] = piece
 
     @property
     def address(self) -> list[int]:
@@ -115,11 +115,15 @@ class Player:
 
 
 class Table:
-    def __init__(self, players: list[Player]) -> None:
+    def __init__(self, players: list[Player], table: Optional[list[list[Block]]] = None) -> None:
         self.__players = players
-        self.__table: list[list[Block]] = [
-            [Block([x, y]) for y in range(8)] for x in range(8)
-        ]
+        # self.__table: list[list[Block]] = [
+        #     # ここでBlockクラスのインスタンスを作成している
+        #     # しかし、ここでBlockのpiecesが初期化の時にNoneになってしまう
+        #     # 初期化をしない（代わりの関数を呼び出す）か、初期化の時にpieceを設定する必要がある
+        #     [Block([x, y]) for y in range(8)] for x in range(8)
+        # ]
+        self.__table = [[Block([x, y]) for y in range(8)] for x in range(8)] if table is None else table
         self.__winner: str = ""
         self.__escapable_positions: dict[int, list[tuple[int, int]]] = {
             0: [(0, 0), (0, 7)],

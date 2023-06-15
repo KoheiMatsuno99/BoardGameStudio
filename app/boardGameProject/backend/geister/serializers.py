@@ -35,8 +35,8 @@ class BlockSerializer(serializers.Serializer):
     piece = PieceSerializer(allow_null=True)
 
     def create(self, validated_data) -> Block:
-        validated_data.pop("piece", None)
-        return Block(**validated_data)
+        piece = validated_data.pop("piece", None)
+        return Block(**validated_data, piece=piece)
 
     def update(self, instance, validated_data):
         instance.address = validated_data.get("address", instance.address)
@@ -96,13 +96,28 @@ class TableSerializer(serializers.Serializer):
         players_data = validated_data.pop("players", [])
         players = []
         for player_data in players_data:
+            # ここでplayer_dataの中身（piecesのposition）を確認してみる
+            # NoneになっていなければOK
+            # player_serializerの中身(piece_serializer)を確認してみる
+            # NoneになっていなければOK
             player_serializer = PlayerSerializer(data=player_data)
             if player_serializer.is_valid():
                 players.append(player_serializer.save())
-        validated_data.pop("winner", None)
-        validated_data.pop("table", None)
+        validated_data.pop("winner", "")
+        # validated_dataのtableの中身を確認してみる
+        # Blockのpieceが全てのマスでNoneになっているか確認してみる
+        # NoneになっていなければOK（配置されているマスはNoneではないはず）
+        table_data = validated_data.pop("table", None)
+        table = []
+        for row_data in table_data:
+            row = []
+            for block_data in row_data:
+                block_serializer = BlockSerializer(data=block_data)
+                if block_serializer.is_valid():
+                    row.append(block_serializer.save())
+            table.append(row)
         validated_data.pop("turn", None)
-        return Table(players=players, **validated_data)
+        return Table(players=players, table=table, **validated_data)
 
     def update(self, instance, validated_data):
         current_table_data = validated_data.pop("table", None)

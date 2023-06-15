@@ -51,6 +51,8 @@ def get_ready(request: Request) -> Response:
     # 2. table_serializerのtableフィールドの各Blockのpieceが全てNoneになっている
     # new_table_dataでは期待通りのデータのため、リクエストには問題なし
     # todo TableSerializerの修正が必要
+    # おそらくPlayerSerializerとBlockSerializerの修正が必要
+    # まずはBlockSerializerの修正から
     table_serializer = TableSerializer(data=new_table_data)
     if table_serializer.is_valid():
         updated_table = table_serializer.save()
