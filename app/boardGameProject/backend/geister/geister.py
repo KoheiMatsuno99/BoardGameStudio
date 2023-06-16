@@ -74,14 +74,19 @@ class Block:
 class Player:
     # todo オンライン対戦時に名前被りで衝突する可能性があるので、名前ではなくidに変更or追加
     # idはプレイヤーの戦績を管理するPlayerInfoクラスからとってくる
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, pieces: Optional[dict[str, Piece]] = None) -> None:
         self.name = name
-        self.pieces: dict[str, Piece] = {
-            f"{self.name}_blue_{i}": Piece(self.name, "blue") for i in range(4)
-        }
-        self.pieces.update(
-            {f"{self.name}_red_{i}": Piece(self.name, "red") for i in range(4)}
-        )
+        # pieces is Noneになるのはゲーム開始時
+        if pieces is None:
+            self.pieces: dict[str, Piece] = {
+                f"{self.name}_blue_{i}": Piece(self.name, "blue") for i in range(4)
+            }
+            self.pieces.update(
+                {f"{self.name}_red_{i}": Piece(self.name, "red") for i in range(4)}
+            )
+        # piece is not Noneの場合は位置情報を更新する場合を想定
+        else:
+            self.pieces = pieces
         self.__picked_red_pieces_count: int = 0
         self.__picked_blue_pieces_count: int = 0
 
@@ -119,12 +124,6 @@ class Table:
         self, players: list[Player], table: Optional[list[list[Block]]] = None
     ) -> None:
         self.__players = players
-        # self.__table: list[list[Block]] = [
-        #     # ここでBlockクラスのインスタンスを作成している
-        #     # しかし、ここでBlockのpiecesが初期化の時にNoneになってしまう
-        #     # 初期化をしない（代わりの関数を呼び出す）か、初期化の時にpieceを設定する必要がある
-        #     [Block([x, y]) for y in range(8)] for x in range(8)
-        # ]
         self.__table = (
             [[Block([x, y]) for y in range(8)] for x in range(8)]
             if table is None
@@ -132,7 +131,9 @@ class Table:
         )
         self.__winner: str = ""
         self.__escapable_positions: dict[int, list[tuple[int, int]]] = {
+            # self.__players[0]の逃げられる場所は[(0, 0), (0, 7)]
             0: [(0, 0), (0, 7)],
+            # self.__players[1]の逃げられる場所は[(7, 0), (7, 7)]
             1: [(7, 0), (7, 7)],
         }
         self.__turn: int = 0

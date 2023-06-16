@@ -46,7 +46,10 @@ class BlockSerializer(serializers.Serializer):
 
 class PlayerSerializer(serializers.Serializer):
     name = serializers.CharField()
-    pieces = serializers.SerializerMethodField()
+    # pieces = serializers.SerializerMethodField()
+    # ここが問題
+    # pieces = serializers.ListField(child=PieceSerializer(), required=False)
+    pieces = serializers.DictField(child=PieceSerializer(), required=False)
     picked_blue_pieces_count = serializers.IntegerField(
         min_value=0, max_value=4, required=False
     )
@@ -54,26 +57,11 @@ class PlayerSerializer(serializers.Serializer):
         min_value=0, max_value=4, required=False
     )
 
-    def get_pieces(self, obj: Player) -> list[dict]:
-        return [
-            {
-                "owner": piece.get_owner(),
-                "type": piece.get_type(),
-                "position": piece.get_position(),
-            }
-            for piece in obj.pieces.values()
-        ]
-
-    def get_picked_blue_pieces_count(self, obj: Player) -> int:
-        return obj.get_picked_blue_pieces_count()
-
-    def get_picked_red_pieces_count(self, obj: Player) -> int:
-        return obj.get_picked_red_pieces_count()
-
     def create(self, validated_data) -> Player:
+        pieces = validated_data.pop("pieces", None)
         validated_data.pop("picked_blue_pieces_count", 0)
         validated_data.pop("picked_red_pieces_count", 0)
-        return Player(**validated_data)
+        return Player(pieces=pieces, **validated_data)
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)
@@ -89,9 +77,20 @@ class PlayerSerializer(serializers.Serializer):
 
 class TableSerializer(serializers.Serializer):
     players = serializers.ListField(child=PlayerSerializer())
-    winner = serializers.CharField(allow_blank=True)
-    table = serializers.ListField(child=serializers.ListField(child=BlockSerializer()))
-    turn = serializers.IntegerField(min_value=0, max_value=1)
+    winner = serializers.CharField(allow_blank=True, required=False)
+    table = serializers.ListField(
+        child=serializers.ListField(child=BlockSerializer()), required=False
+    )
+    turn = serializers.IntegerField(min_value=0, max_value=1, required=False)
+
+    def get_players(self, obj: Table) -> list[Player]:
+        return obj.get_players()
+
+    def get_winner(self, obj: Table) -> str:
+        return obj.get_winner()
+
+    def get_table(self, obj: Table) -> list[list[Block]]:
+        return obj.get_table()
 
     def get_turn(self, obj: Table) -> int:
         return obj.get_turn()
@@ -122,6 +121,14 @@ class TableSerializer(serializers.Serializer):
             table.append(row)
         validated_data.pop("turn", None)
         return Table(players=players, table=table, **validated_data)
+
+    def to_representation(self, instance: Table):
+        rep = super().to_representation(instance)
+        rep["players"] = PlayerSerializer(instance.players, many=True).data
+        rep["table"] = [
+            [BlockSerializer(block).data for block in row] for row in instance.table
+        ]
+        return rep
 
     def update(self, instance, validated_data):
         current_table_data = validated_data.pop("table", None)

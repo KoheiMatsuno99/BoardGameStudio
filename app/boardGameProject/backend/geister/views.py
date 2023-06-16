@@ -11,6 +11,8 @@ from .serializers import (
     BlockSerializer,
 )
 
+import json
+
 
 @api_view(["POST"])
 def start_game(request: Request) -> Response:
@@ -18,13 +20,15 @@ def start_game(request: Request) -> Response:
     print(player_data)
     player_serializer = PlayerSerializer(data=player_data, many=True)
     if player_serializer.is_valid():
-        players: list[Player] = player_serializer.save()
+        players = player_serializer.save()
         table = Table(players)
-        serialized_table = TableSerializer(table)
-        request.session["table"] = serialized_table.data
         table_serializer = TableSerializer(table)
-        print(table_serializer.data)
-        return Response(table_serializer.data, status=status.HTTP_201_CREATED)
+        serialized_data = table_serializer.data
+        request.session["table"] = serialized_data
+        print(serialized_data)
+        json_data = json.dumps(serialized_data)
+        print(json_data)
+        return Response(serialized_data, status=status.HTTP_201_CREATED)
     else:
         return Response(player_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -48,11 +52,9 @@ def get_ready(request: Request) -> Response:
     print("----------")
     # 以下の問題がある
     # 1. table_serializerのplayerフィールドのpiecesのpositionがNoneになっている
-    # 2. table_serializerのtableフィールドの各Blockのpieceが全てNoneになっている
     # new_table_dataでは期待通りのデータのため、リクエストには問題なし
     # todo TableSerializerの修正が必要
-    # おそらくPlayerSerializerとBlockSerializerの修正が必要
-    # まずはBlockSerializerの修正から
+    # おそらくPlayerSerializerの修正が必要
     table_serializer = TableSerializer(data=new_table_data)
     if table_serializer.is_valid():
         updated_table = table_serializer.save()

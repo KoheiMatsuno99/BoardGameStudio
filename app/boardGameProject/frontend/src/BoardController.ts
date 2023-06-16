@@ -6,13 +6,9 @@ export class ApiGateway{
         const playerData = [
             {
                 "name": player1,
-                //"picked_blue_pieces_count": 0,
-                //"picked_red_pieces_count": 0, 
             },
             {
                 "name": player2,
-                //"picked_blue_pieces_count": 0,
-                //"picked_red_pieces_count": 0,
             }
         ];
         //todo リクエスト先をlocalhostから変更する
