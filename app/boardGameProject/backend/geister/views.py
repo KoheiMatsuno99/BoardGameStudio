@@ -25,7 +25,6 @@ def start_game(request: Request) -> Response:
         table_serializer = TableSerializer(table)
         serialized_data = table_serializer.data
         request.session["table"] = serialized_data
-        print(serialized_data)
         json_data = json.dumps(serialized_data)
         print(json_data)
         return Response(serialized_data, status=status.HTTP_201_CREATED)
@@ -43,6 +42,13 @@ def get_ready(request: Request) -> Response:
             {"detail": "Session data not found"}, status=status.HTTP_400_BAD_REQUEST
         )
     new_table_data = request.data
+    if isinstance(new_table_data, list):
+        new_table_data = {
+            "players": current_table_data.get("players"),
+            "winner": current_table_data.get("winner", ""),
+            "table": new_table_data,
+            "turn": current_table_data.get("turn"),
+        }
     print("----------")
     print("----------")
     print("new data is following this;")

@@ -46,9 +46,6 @@ class BlockSerializer(serializers.Serializer):
 
 class PlayerSerializer(serializers.Serializer):
     name = serializers.CharField()
-    # pieces = serializers.SerializerMethodField()
-    # ここが問題
-    # pieces = serializers.ListField(child=PieceSerializer(), required=False)
     pieces = serializers.DictField(child=PieceSerializer(), required=False)
     picked_blue_pieces_count = serializers.IntegerField(
         min_value=0, max_value=4, required=False
