@@ -80,10 +80,10 @@ const useBoardState = (initialData: Table) => {
         }
         let pieceOfPositionUpdated = {...selectedPiece, position: block.address}
         setBoardInfo(board => board.map(row => row.map(b => b === block ? { ...b, piece:  pieceOfPositionUpdated} : b)));
-        setPlayerPieces(playerUnsetPieces => playerUnsetPieces.map(pieces => pieces.filter(p => p !== selectedPiece)));
+        setPlayerPieces(playerUnsetPieces => playerUnsetPieces.map(pieces => Object.values(pieces).filter(p => p !== selectedPiece)));
         setPlayers(players => players.map(player => ({
             ...player,
-            pieces: player.pieces.map(piece => piece === selectedPiece ? pieceOfPositionUpdated : piece)
+            pieces: Object.values(player.pieces).map(piece => piece === selectedPiece ? pieceOfPositionUpdated : piece)
         })));
         setSelectedPiece(null);
     }
