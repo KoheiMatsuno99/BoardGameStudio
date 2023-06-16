@@ -14,7 +14,10 @@ export interface Block {
 
 export interface Player {
     name: string;
-    pieces: Piece[];
+    //pieces: Piece[];
+    pieces: {
+        [key: string]: Piece;
+    }
     pickedBluePiecesCount: number,
     pickedRedPiecesCount: number
 }
@@ -38,7 +41,7 @@ const useBoardState = (initialData: Table) => {
         );
     const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
     const [boardInfo, setBoardInfo] = useState<Block[][]>(initialBoard);
-    const [playerUnsetPieces, setPlayerPieces] = useState<Piece[][]>([initialData.players[0].pieces, initialData.players[1].pieces]);
+    const [playerUnsetPieces, setPlayerPieces] = useState<Piece[][]>([Object.values(initialData.players[0].pieces), Object.values(initialData.players[1].pieces)]);
     const [players, setPlayers] = useState<Player[]>(initialData.players);
     const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
 
@@ -83,8 +86,12 @@ const useBoardState = (initialData: Table) => {
         setPlayerPieces(playerUnsetPieces => playerUnsetPieces.map(pieces => Object.values(pieces).filter(p => p !== selectedPiece)));
         setPlayers(players => players.map(player => ({
             ...player,
-            pieces: Object.values(player.pieces).map(piece => piece === selectedPiece ? pieceOfPositionUpdated : piece)
+            pieces: Object.entries(player.pieces).reduce((obj, [key, value]) => {
+                obj[key] = value === selectedPiece ? pieceOfPositionUpdated : value;
+                return obj;
+            }, {} as {[key: string]: Piece})
         })));
+              
         setSelectedPiece(null);
     }
 
@@ -101,8 +108,12 @@ const useBoardState = (initialData: Table) => {
         setBoardInfo(board => board.map(row => row.map(b => b === block ? { ...b, piece:  pieceOfPositionUpdated} : b)));
         setPlayers(players => players.map(player => ({
             ...player,
-            pieces: player.pieces.map(piece => piece === selectedPiece ? pieceOfPositionUpdated : piece)
+            pieces: Object.entries(player.pieces).reduce((obj, [key, value]) => {
+                obj[key] = value === selectedPiece ? pieceOfPositionUpdated : value;
+                return obj;
+            }, {} as {[key: string]: Piece})
         })));
+        
         ApiGateway.movePiece(players, selectedPiece, block)
         setSelectedPiece(null);
     }
