@@ -128,6 +128,7 @@ def get_piece_key_from_players(
 
 @api_view(["POST"])
 def move_piece(request: Request) -> Response:
+    # そもそもPython内で行う処理ならシリアライズしなくてもいいのでは？
     session_table = request.session.get("table")
     if session_table is None:
         return Response(
