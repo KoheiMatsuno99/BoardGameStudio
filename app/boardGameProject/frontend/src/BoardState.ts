@@ -63,8 +63,8 @@ const useBoardState = (initialData: Table) => {
             return;
         }
         const validPlacementRange = [
-            {"rowStart": 0, "rowEnd": 1, "colStart": 0, "colEnd": 7},
             {"rowStart": 6, "rowEnd": 7, "colStart": 0, "colEnd": 7},
+            {"rowStart": 0, "rowEnd": 1, "colStart": 0, "colEnd": 7},
         ]
         const {rowStart, rowEnd, colStart, colEnd} = validPlacementRange[playerIndex]
         const [selectedRow, selectedCol] = block.address;

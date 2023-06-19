@@ -59,7 +59,7 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
         <div className={styles.container}>
             <div className={styles.capturedPiecesTop}>
                 <div>{initialData.players[1].name}</div>          
-                <PieceDisplay pieces={playerUnsetPieces[0]} player={initialData.players[0]} handlePieceClick={handlePieceClick} />
+                <PieceDisplay pieces={playerUnsetPieces[1]} player={initialData.players[1]} handlePieceClick={handlePieceClick} />
             </div>
             <div className={styles.board}>
                 {boardInfo.map((row, row_i) => (
@@ -67,7 +67,7 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
                 ))}
             </div>
             <div className={styles.capturedPiecesBottom}>
-                <PieceDisplay pieces={playerUnsetPieces[1]} player={initialData.players[1]} handlePieceClick={handlePieceClick} />
+                <PieceDisplay pieces={playerUnsetPieces[0]} player={initialData.players[0]} handlePieceClick={handlePieceClick} />
                 <div>{initialData.players[0].name}</div>
             </div>
         </div>
