@@ -261,6 +261,8 @@ class Table:
             player_piece
         )
 
+    # コマの移動範囲の制御はフロントエンドに移した方が良いかも
+
     def is_movable(self, piece: Piece, destination: Block) -> bool:
         # 現在位置の上下左右1マスより離れていたら移動不可
         current_position: Optional[list[int]] = piece.get_position()
