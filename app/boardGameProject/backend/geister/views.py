@@ -1,9 +1,10 @@
+from typing import Optional, Tuple
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
 
-from .geister import Block, Piece, Player, Table
+from .geister import Table, Player, Piece, Block
 from .serializers import (
     PlayerSerializer,
     TableSerializer,
@@ -56,11 +57,6 @@ def get_ready(request: Request) -> Response:
     print(new_table_data)
     print("----------")
     print("----------")
-    # 以下の問題がある
-    # 1. table_serializerのplayerフィールドのpiecesのpositionがNoneになっている
-    # new_table_dataでは期待通りのデータのため、リクエストには問題なし
-    # todo TableSerializerの修正が必要
-    # おそらくPlayerSerializerの修正が必要
     table_serializer = TableSerializer(data=new_table_data)
     if table_serializer.is_valid():
         updated_table = table_serializer.save()
@@ -71,84 +67,116 @@ def get_ready(request: Request) -> Response:
         return Response(table_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+def get_table_serializer(
+    data: dict,
+) -> Tuple[Optional[Table], Optional[Response]]:
+    table_serializer = TableSerializer(data=data)
+    if table_serializer.is_valid():
+        return table_serializer.save(), None
+    else:
+        return None, Response(
+            table_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+def get_players_serializer(
+    data: dict,
+) -> Tuple[Optional[list[Player]], Optional[Response]]:
+    player_serializer = PlayerSerializer(data=data, many=True)
+    if player_serializer.is_valid():
+        return player_serializer.save(), None
+    else:
+        return None, Response(
+            player_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+def get_piece_serializer(
+    data: dict,
+) -> Tuple[Optional[Piece], Optional[Response]]:
+    piece_serializer = PieceSerializer(data=data)
+    if piece_serializer.is_valid():
+        return piece_serializer.save(), None
+    else:
+        return None, Response(
+            piece_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+def get_block_serializer(
+    data: dict,
+) -> Tuple[Optional[Block], Optional[Response]]:
+    block_serializer = BlockSerializer(data=data)
+    if block_serializer.is_valid():
+        return block_serializer.save(), None
+    else:
+        return None, Response(
+            block_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+def get_piece_key_from_players(
+    players_data: list[dict], piece_key: str
+) -> Tuple[Optional[dict], Optional[Response]]:
+    for player in players_data:
+        if piece_key in player["pieces"]:
+            return player["pieces"][piece_key], None
+    return None, Response(
+        {"error": "piece_key not found"}, status=status.HTTP_400_BAD_REQUEST
+    )
+
+
 @api_view(["POST"])
 def move_piece(request: Request) -> Response:
-    table_data = request.session.get("table")
-    if table_data is None:
-        return Response({"error": "ゲームが開始されていません"}, status=status.HTTP_400_BAD_REQUEST)
-    print("table_data", table_data)
-    print("----------")
-    table_selializer = TableSerializer(data=table_data)
-    print("is valid table serializer", table_selializer.is_valid())
-    # todo Serializerに渡すデータをlist -> dictにする
-    players_data = request.data["players"]
-    players_serializer = PlayerSerializer(data=players_data, many=True)
-    print("is valid players_serializer", players_serializer.is_valid())
-    player_piece_data = request.data["player_piece"]["piece"]
-    player_piece_serializer = PieceSerializer(data=player_piece_data)
-    print(player_piece_data)
-    print(player_piece_serializer)
-    print("is valid player_piece_serializer", player_piece_serializer.is_valid())
-    destination_data = request.data["destination"]
-    destination_serializer = BlockSerializer(data=destination_data)
-    print("is valid destination_serializer", destination_serializer.is_valid())
-    print("----------")
-    if (
-        table_selializer.is_valid()
-        and players_serializer.is_valid()
-        and player_piece_serializer.is_valid()
-        and destination_serializer.is_valid()
-    ):
-        table: Table = table_selializer.save()
-        players: list[Player] = players_serializer.save()
-        print(players, type(players))
-        player_piece: Piece = player_piece_serializer.save()
-        print(player_piece_serializer)
-        print(player_piece.get_owner(), player_piece.get_type(), player_piece.position)
-        destination: Block = destination_serializer.save()
-        # players[0]は仮置き
-        # Tableクラスにターンを新たなフィールドとして作成
-        current_table = request.session.get("table")
-        if current_table is None:
-            return Response(
-                {"error": "ゲームが開始されていません"}, status=status.HTTP_400_BAD_REQUEST
-            )
-        current_turn: int = current_table["turn"]
-        print("current_turn", current_turn)
-        print("players[current_turn]", players[current_turn])
-        print("player_piece", player_piece.get_position())
-        print("destination", destination.get_address())
-        table.move(players[current_turn], player_piece, destination)
-        print("移動後", player_piece.get_position())
-        table.switch_turn()
-        # todo
-        # 更新したtableをtable_serializerに渡す
-        # 更新したtableをsessionに保存
-        updated_table_serializer = TableSerializer(table)
-        request.session["table"] = updated_table_serializer.data
-        print("----------")
-        print(updated_table_serializer.data)
-        print("----------")
-        return Response(updated_table_serializer.data, status=status.HTTP_200_OK)
-    elif not table_selializer.is_valid():
+    session_table = request.session.get("table")
+    if session_table is None:
         return Response(
-            {"table_serializer": table_selializer.errors},
-            status=status.HTTP_400_BAD_REQUEST,
+            {"detail": "Session data not found"}, status=status.HTTP_400_BAD_REQUEST
         )
-    elif not players_serializer.is_valid():
-        print("players_serializer.errors", players_serializer.errors)
+    table, error_response = get_table_serializer(session_table)
+    if error_response:
+        return error_response
+    if table is None:
         return Response(
-            {"players_serializer": players_serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST,
+            {"detail": "Session data not found"}, status=status.HTTP_400_BAD_REQUEST
         )
-    elif not player_piece_serializer.is_valid():
-        print("player_piece_serializer.errors", player_piece_serializer.errors)
+
+    players, error_response = get_players_serializer(request.data["players"])
+    if error_response:
+        return error_response
+    if players is None:
         return Response(
-            {"player_piece_serializer": player_piece_serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST,
+            {"detail": "request.data['players'] is None"},
+            status=status.HTTP_400_BAD_REQUEST
         )
-    else:
+
+    piece_key = request.data["piece_key"]
+
+    player_piece, error_response = get_piece_serializer(request.data["player_piece"])
+    if error_response:
+        return error_response
+    if player_piece is None:
         return Response(
-            {"destination_serializer": destination_serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST,
+            {"detail": "request.data['player_piece'] is None"},
+            status=status.HTTP_400_BAD_REQUEST
         )
+
+    destination, error_response = get_block_serializer(request.data["destination"])
+
+    if error_response:
+        return error_response
+    if destination is None:
+        return Response(
+            {"detail": "request.data['destination'] is None"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    current_turn: int = session_table["turn"]
+    # if not table.is_movable(player_piece, destination):
+    #     return
+    table.move(players[current_turn], player_piece, piece_key, destination)
+    table.switch_turn()
+
+    updated_table = TableSerializer(table).data
+    request.session["table"] = updated_table
+    return Response(updated_table, status=status.HTTP_200_OK)
