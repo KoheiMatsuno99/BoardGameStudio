@@ -224,7 +224,11 @@ class Table:
 
     # 自分のコマを動かすメソッド
     def move(
-        self, player: Player, player_piece: Optional[Piece], destination: Block
+        self,
+        player: Player,
+        player_piece: Optional[Piece],
+        piece_key: str,
+        destination: Block,
     ) -> None:
         print("----------moving----------")
         if player_piece is None:
@@ -251,12 +255,13 @@ class Table:
         self.__table[current_position[0]][current_position[1]].set_piece(None)
         # 移動先のブロックにコマを配置
         destination_position: list[int] = destination.get_address()
-        player_piece.set_position(destination_position)
+        # player_piece.set_position(destination_position)
+        player.pieces[piece_key].set_position(destination_position)
         self.__table[destination_position[0]][destination_position[1]].set_piece(
             player_piece
         )
 
-    def _is_movable(self, piece: Piece, destination: Block) -> bool:
+    def is_movable(self, piece: Piece, destination: Block) -> bool:
         # 現在位置の上下左右1マスより離れていたら移動不可
         current_position: Optional[list[int]] = piece.get_position()
         if current_position is None:
@@ -293,23 +298,3 @@ class Table:
             ):
                 return True
         return False
-
-    # ゲームの進行を行うメソッド
-    def play(self) -> None:
-        print("Game Start!")
-        # 各プレイヤーがコマの初期位置を設定する
-        # オフラインモードではCPUのコマは自動で設定する
-        # オンラインモードでは各プレイヤーが同時に設定できるように非同期処理を使用する
-        # 一方のプレイヤーが配置完了した後に、もう一方のプレイヤーが配置をするように制御するのはUXが悪い
-        while self.__winner:
-            for player in self.__players:
-                # todo
-                # not _is_movable の時はアラートと共に、
-                # _is_movableになるまで再度移動場所を指定させる
-                # フロントエンド実装段階ではマスをタップすることでそこにあるコマを引数pieceに渡す
-                # そして、pieceを選択した状態で行き先のマスをタップするとdestinationに渡すようにする
-                if self._is_movable(Piece(player.get_name(), "blue"), Block([3, 4])):
-                    # piece, destinationは仮置き
-                    self.move(player, Piece(player.get_name(), "blue"), Block([3, 4]))
-        print("Game Set!")
-        print(self.__winner + " wins!")
