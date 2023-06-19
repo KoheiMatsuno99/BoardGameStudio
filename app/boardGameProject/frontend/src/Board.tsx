@@ -19,7 +19,7 @@ const BoardRow: React.FC<{row: Block[], handleBlockClick: Function, handlePieceC
                 {square.piece && <img src={`../img/${square.piece.type}Ghost.jpeg`} className={styles.ghostImgSmall} onClick={
                     (event) => {
                         event.stopPropagation();
-                        handlePieceClick(square);
+                        handlePieceClick(square.piece);
                     }
                 }/>}
             </div>

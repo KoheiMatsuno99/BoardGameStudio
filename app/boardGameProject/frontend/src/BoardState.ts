@@ -14,7 +14,6 @@ export interface Block {
 
 export interface Player {
     name: string;
-    //pieces: Piece[];
     pieces: {
         [key: string]: Piece;
     }
@@ -104,6 +103,25 @@ const useBoardState = (initialData: Table) => {
             alert("そのマスにはコマがすでに存在します");
             return;
         }
+        console.log("Selected piece: ", selectedPiece);
+        console.log("Players: ", players);
+        // selectedPieceKeyを探す
+        let selectedPieceKey: string | null = null;
+        const currentPlayer = players.find(player => player.name === selectedPiece.owner);
+        console.log("Current player: ", currentPlayer);
+        if (currentPlayer) {
+            const keys = Object.keys(currentPlayer.pieces);
+            const values = Object.values(currentPlayer.pieces);
+            for (let i = 0; i < keys.length; i++) {
+                const value = values[i];
+                if (value.owner === selectedPiece.owner && value.type === selectedPiece.type && value.position[0] === selectedPiece.position[0] && value.position[1] === selectedPiece.position[1]) {
+                    selectedPieceKey = keys[i];
+                    console.log("selectedPieceKey: ", selectedPieceKey);
+                    break;
+                }
+            }
+        }
+        console.log(currentPlayer)
         let pieceOfPositionUpdated = {...selectedPiece, position: block.address}
         setBoardInfo(board => board.map(row => row.map(b => b === block ? { ...b, piece:  pieceOfPositionUpdated} : b)));
         setPlayers(players => players.map(player => ({
@@ -113,9 +131,15 @@ const useBoardState = (initialData: Table) => {
                 return obj;
             }, {} as {[key: string]: Piece})
         })));
-        
-        ApiGateway.movePiece(players, selectedPiece, block)
-        setSelectedPiece(null);
+        if(selectedPieceKey !== null){
+            ApiGateway.movePiece(players, selectedPiece, selectedPieceKey, block);
+            setSelectedPiece(null); 
+        }
+        // else{
+        //     alert("あなたのコマではないので動かせません");
+        //     setSelectedPiece(null);
+        //     return
+        // }
     }
 
     const handleBlockClick = (block: Block) => {
