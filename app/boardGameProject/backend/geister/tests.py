@@ -6,106 +6,106 @@ from .geister import Piece, Table, Player
 Tableクラスのis_movable()のテスト
 """
 
+# フロントエンドで移動のバリデーションを行うため、一旦コメントアウト
+# def test_not_movable_separate_block():
+#     t = Table([Player("test1"), Player("test2")])
+#     table = t.get_table()
+#     piece1 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece1.set_position([3, 3])
+#     table[3][3].set_piece(piece1)
+#     # 隣接しない位置には移動できない
+#     assert not t._is_movable(piece1, table[3][5])
+#     assert not t._is_movable(piece1, table[3][1])
+#     assert not t._is_movable(piece1, table[1][3])
+#     assert not t._is_movable(piece1, table[5][3])
 
-def test_not_movable_separate_block():
-    t = Table([Player("test1"), Player("test2")])
-    table = t.get_table()
-    piece1 = Piece(t.get_players()[0].get_name(), "blue")
-    piece1.set_position([3, 3])
-    table[3][3].set_piece(piece1)
-    # 隣接しない位置には移動できない
-    assert not t._is_movable(piece1, table[3][5])
-    assert not t._is_movable(piece1, table[3][1])
-    assert not t._is_movable(piece1, table[1][3])
-    assert not t._is_movable(piece1, table[5][3])
-
-    piece2 = Piece(t.get_players()[0].get_name(), "blue")
-    piece2.set_position([0, 0])
-    table[0][0].set_piece(piece2)
-    # 隣接しない位置には移動できない
-    assert not t.is_movable(piece2, table[2][0])
-    assert not t.is_movable(piece2, table[0][2])
-
-
-def test_not_movable_cross_block():
-    t = Table([Player("test1"), Player("test2")])
-    table = t.get_table()
-    piece1 = Piece(t.get_players()[0].get_name(), "blue")
-    piece1.set_position([4, 6])
-    table[4][6].set_piece(piece1)
-    # 斜めには移動できない
-    assert not t._is_movable(piece1, table[3][5])
-    assert not t._is_movable(piece1, table[5][7])
-    assert not t._is_movable(piece1, table[5][5])
-    assert not t._is_movable(piece1, table[3][7])
-
-    piece2 = Piece(t.get_players()[0].get_name(), "blue")
-    piece2.set_position([0, 0])
-    table[0][0].set_piece(piece2)
-    # 斜めには移動できない
-    assert not t._is_movable(piece2, table[1][1])
+#     piece2 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece2.set_position([0, 0])
+#     table[0][0].set_piece(piece2)
+#     # 隣接しない位置には移動できない
+#     assert not t.is_movable(piece2, table[2][0])
+#     assert not t.is_movable(piece2, table[0][2])
 
 
-def test_not_movable_same_block():
-    t = Table([Player("test1"), Player("test2")])
-    table = t.get_table()
-    piece1 = Piece(t.get_players()[0].get_name(), "blue")
-    piece1.set_position([4, 6])
-    table[4][6].set_piece(piece1)
-    # 同じ場所には移動できない
-    assert not t._is_movable(piece1, table[4][6])
+# def test_not_movable_cross_block():
+#     t = Table([Player("test1"), Player("test2")])
+#     table = t.get_table()
+#     piece1 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece1.set_position([4, 6])
+#     table[4][6].set_piece(piece1)
+#     # 斜めには移動できない
+#     assert not t._is_movable(piece1, table[3][5])
+#     assert not t._is_movable(piece1, table[5][7])
+#     assert not t._is_movable(piece1, table[5][5])
+#     assert not t._is_movable(piece1, table[3][7])
 
-    piece2 = Piece(t.get_players()[0].get_name(), "blue")
-    piece2.set_position([0, 0])
-    table[0][0].set_piece(piece2)
-    # 同じ場所には移動できない
-    assert not t._is_movable(piece2, table[0][0])
-
-
-def test_not_movable_block_with_my_piece():
-    t = Table([Player("test1"), Player("test2")])
-    table = t.get_table()
-    piece1 = Piece(t.get_players()[0].get_name(), "blue")
-    piece1.set_position([4, 6])
-    table[4][6].set_piece(piece1)
-    piece2 = Piece(t.get_players()[0].get_name(), "blue")
-    piece2.set_position([4, 5])
-    table[4][5].set_piece(piece2)
-    # 移動先に自分のコマがある場合は移動できない
-    assert not t._is_movable(piece1, table[4][5])
+#     piece2 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece2.set_position([0, 0])
+#     table[0][0].set_piece(piece2)
+#     # 斜めには移動できない
+#     assert not t._is_movable(piece2, table[1][1])
 
 
-def test_is_moveable_block_with_opponent_piece():
-    t = Table([Player("test1"), Player("test2")])
-    table = t.get_table()
-    piece1 = Piece(t.get_players()[0].get_name(), "blue")
-    piece1.set_position([4, 6])
-    table[4][6].set_piece(piece1)
-    piece2 = Piece(t.get_players()[1].get_name(), "blue")
-    piece2.set_position([4, 5])
-    table[4][5].set_piece(piece2)
-    # 移動先に相手のコマがある場合は移動できる
-    assert t._is_movable(piece1, table[4][5])
+# def test_not_movable_same_block():
+#     t = Table([Player("test1"), Player("test2")])
+#     table = t.get_table()
+#     piece1 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece1.set_position([4, 6])
+#     table[4][6].set_piece(piece1)
+#     # 同じ場所には移動できない
+#     assert not t._is_movable(piece1, table[4][6])
 
-    piece3 = Piece(t.get_players()[0].get_name(), "red")
-    piece3.set_position([0, 0])
-    table[0][0].set_piece(piece3)
-    piece4 = Piece(t.get_players()[1].get_name(), "blue")
-    piece4.set_position([0, 1])
-    table[0][1].set_piece(piece4)
-    # 移動先に相手のコマがある場合は移動できる
-    assert t._is_movable(piece3, table[0][1])
+#     piece2 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece2.set_position([0, 0])
+#     table[0][0].set_piece(piece2)
+#     # 同じ場所には移動できない
+#     assert not t._is_movable(piece2, table[0][0])
 
 
-def test_is_movable():
-    t = Table([Player("test1"), Player("test2")])
-    table = t.get_table()
-    piece1 = Piece(t.get_players()[0].get_name(), "blue")
-    piece1.set_position([0, 0])
-    table[0][0].set_piece(piece1)
-    # 隣接する位置かつ目的地にコマがない場合は移動できる
-    assert t._is_movable(piece1, table[0][1])
-    assert t._is_movable(piece1, table[1][0])
+# def test_not_movable_block_with_my_piece():
+#     t = Table([Player("test1"), Player("test2")])
+#     table = t.get_table()
+#     piece1 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece1.set_position([4, 6])
+#     table[4][6].set_piece(piece1)
+#     piece2 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece2.set_position([4, 5])
+#     table[4][5].set_piece(piece2)
+#     # 移動先に自分のコマがある場合は移動できない
+#     assert not t._is_movable(piece1, table[4][5])
+
+
+# def test_is_moveable_block_with_opponent_piece():
+#     t = Table([Player("test1"), Player("test2")])
+#     table = t.get_table()
+#     piece1 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece1.set_position([4, 6])
+#     table[4][6].set_piece(piece1)
+#     piece2 = Piece(t.get_players()[1].get_name(), "blue")
+#     piece2.set_position([4, 5])
+#     table[4][5].set_piece(piece2)
+#     # 移動先に相手のコマがある場合は移動できる
+#     assert t._is_movable(piece1, table[4][5])
+
+#     piece3 = Piece(t.get_players()[0].get_name(), "red")
+#     piece3.set_position([0, 0])
+#     table[0][0].set_piece(piece3)
+#     piece4 = Piece(t.get_players()[1].get_name(), "blue")
+#     piece4.set_position([0, 1])
+#     table[0][1].set_piece(piece4)
+#     # 移動先に相手のコマがある場合は移動できる
+#     assert t._is_movable(piece3, table[0][1])
+
+
+# def test_is_movable():
+#     t = Table([Player("test1"), Player("test2")])
+#     table = t.get_table()
+#     piece1 = Piece(t.get_players()[0].get_name(), "blue")
+#     piece1.set_position([0, 0])
+#     table[0][0].set_piece(piece1)
+#     # 隣接する位置かつ目的地にコマがない場合は移動できる
+#     assert t._is_movable(piece1, table[0][1])
+#     assert t._is_movable(piece1, table[1][0])
 
 
 """
