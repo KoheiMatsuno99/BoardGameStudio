@@ -116,11 +116,17 @@ const useBoardState = (initialData: Table) => {
             alert("同じマスには移動できません");
             return;
         }
+        /* todo turnによる制御 
+        turnが0ならplayers[0]のターン、1ならplayers[1]のターン
+        turnが0のときはplayers[0]のコマしか動かせない
+        turnが1のときはplayers[1]のコマしか動かせない        
+        */
+
+        // 相手のコマを取る
         if(block.piece?.owner === selectedPiece.owner){
             alert("自分のコマがあるマスには移動できません");
             return;
         }
-        //相手のコマを取る
         if(block.piece?.owner && block.piece.owner !== selectedPiece.owner){
             block.piece = null;
         }
@@ -140,7 +146,6 @@ const useBoardState = (initialData: Table) => {
                 }
             }
         }
-        console.log(currentPlayer)
         let pieceOfPositionUpdated = {...selectedPiece, position: block.address}
         setBoardInfo(board => board.map(
             row => row.map(
