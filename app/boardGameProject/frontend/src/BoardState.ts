@@ -123,7 +123,13 @@ const useBoardState = (initialData: Table) => {
         }
         console.log(currentPlayer)
         let pieceOfPositionUpdated = {...selectedPiece, position: block.address}
-        setBoardInfo(board => board.map(row => row.map(b => b === block ? { ...b, piece:  pieceOfPositionUpdated} : b)));
+        setBoardInfo(board => board.map(
+            row => row.map(
+                b => {
+                    if (b === block) return { ...b, piece:  pieceOfPositionUpdated};
+                    if (b.piece === selectedPiece) return { ...b, piece: null};
+                    return b;
+                })));
         setPlayers(players => players.map(player => ({
             ...player,
             pieces: Object.entries(player.pieces).reduce((obj, [key, value]) => {
@@ -131,15 +137,16 @@ const useBoardState = (initialData: Table) => {
                 return obj;
             }, {} as {[key: string]: Piece})
         })));
-        if(selectedPieceKey !== null){
+        if (selectedPieceKey === null) {
+            alert("あなたのコマではないので動かせません");
+            setSelectedPiece(null);
+            return
+        }
+        else{
+            //movePieceを呼び出す前に、フロントエンドで移動可能な場所の制御や、そもそも動かせるコマなのかをチェックする
             ApiGateway.movePiece(players, selectedPiece, selectedPieceKey, block);
             setSelectedPiece(null); 
         }
-        // else{
-        //     alert("あなたのコマではないので動かせません");
-        //     setSelectedPiece(null);
-        //     return
-        // }
     }
 
     const handleBlockClick = (block: Block) => {
