@@ -27,6 +27,7 @@ export class ApiGateway{
         return response.data;
     }
     public static async movePiece(players: Player[], player_piece: Piece, piece_key: string , destination: Block): Promise<Table>{
+        //　リクエストに送る情報としてplayersはいらないかも
         const movementInfo = {
             "players": players,
             "player_piece": player_piece,
@@ -34,6 +35,9 @@ export class ApiGateway{
             "destination": destination
         }
         const response = await axios.post('http://localhost:8000/movement/', movementInfo, {withCredentials: true});
+        console.log("moved");
+        console.log(response);
+        console.log("----------");
         return response.data;
     }
 }
