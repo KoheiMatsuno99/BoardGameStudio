@@ -110,6 +110,9 @@ class Player:
             self.__picked_red_pieces_count += 1
             print("赤いオバケを取ってしまった...。")
 
+    def get_pieces(self) -> dict[str, Piece]:
+        return self.pieces
+
     @property
     def picked_red_pieces_count(self) -> int:
         return self.__picked_red_pieces_count
@@ -121,7 +124,10 @@ class Player:
 
 class Table:
     def __init__(
-        self, players: list[Player], table: Optional[list[list[Block]]] = None
+        self,
+        players: list[Player],
+        table: Optional[list[list[Block]]] = None,
+        turn: Optional[int] = None,
     ) -> None:
         self.__players = players
         self.__table = (
@@ -136,7 +142,7 @@ class Table:
             # self.__players[1]の逃げられる場所は[(7, 0), (7, 7)]
             1: [(7, 0), (7, 7)],
         }
-        self.__turn: int = 0
+        self.__turn: int = turn if turn is not None else 0
 
     @property
     def players(self) -> list[Player]:
@@ -255,10 +261,18 @@ class Table:
         self.__table[current_position[0]][current_position[1]].set_piece(None)
         # 移動先のブロックにコマを配置
         destination_position: list[int] = destination.get_address()
-        # player_piece.set_position(destination_position)
-        player.pieces[piece_key].set_position(destination_position)
+        player_piece.set_position(destination_position)
+        # piecesのvalueがPieceクラスではなくOrderedDictクラスになっているため、set_pieceを取得できない
+        print(self.__turn)
+        print(self.get_players()[self.__turn].get_pieces())
+        self.get_players()[self.__turn].get_pieces()[piece_key].set_position(
+            destination_position
+        )
         self.__table[destination_position[0]][destination_position[1]].set_piece(
             player_piece
+        )
+        print(
+            self.__table[destination_position[0]][destination_position[1]].get_address()
         )
 
     # コマの移動範囲の制御はフロントエンドに移した方が良いかも

@@ -55,7 +55,12 @@ class PlayerSerializer(serializers.Serializer):
     )
 
     def create(self, validated_data) -> Player:
-        pieces = validated_data.pop("pieces", None)
+        pieces_data = validated_data.pop("pieces", None)
+        pieces = (
+            {k: Piece(**v) for k, v in pieces_data.items()}
+            if pieces_data is not None
+            else None
+        )
         validated_data.pop("picked_blue_pieces_count", 0)
         validated_data.pop("picked_red_pieces_count", 0)
         return Player(pieces=pieces, **validated_data)
@@ -116,8 +121,8 @@ class TableSerializer(serializers.Serializer):
                 if block_serializer.is_valid():
                     row.append(block_serializer.save())
             table.append(row)
-        validated_data.pop("turn", None)
-        return Table(players=players, table=table, **validated_data)
+        turn = validated_data.pop("turn", 0)
+        return Table(players=players, table=table, turn=turn, **validated_data)
 
     def to_representation(self, instance: Table):
         rep = super().to_representation(instance)

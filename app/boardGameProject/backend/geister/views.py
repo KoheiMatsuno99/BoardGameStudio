@@ -72,7 +72,7 @@ def get_table_serializer(
 ) -> Tuple[Optional[Table], Optional[Response]]:
     table_serializer = TableSerializer(data=data)
     if table_serializer.is_valid():
-        return table_serializer.save(), None
+        return table_serializer.create(table_serializer.validated_data), None
     else:
         return None, Response(
             table_serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -80,11 +80,17 @@ def get_table_serializer(
 
 
 def get_players_serializer(
-    data: dict,
+    data: list[dict],
 ) -> Tuple[Optional[list[Player]], Optional[Response]]:
     player_serializer = PlayerSerializer(data=data, many=True)
     if player_serializer.is_valid():
-        return player_serializer.save(), None
+        players_data = player_serializer.validated_data
+        players = []
+        for player_data in players_data:
+            pieces = {k: Piece(**v) for k, v in player_data["pieces"].items()}
+            player = Player(name=player_data["name"], pieces=pieces)
+            players.append(player)
+        return players, None
     else:
         return None, Response(
             player_serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -96,7 +102,9 @@ def get_piece_serializer(
 ) -> Tuple[Optional[Piece], Optional[Response]]:
     piece_serializer = PieceSerializer(data=data)
     if piece_serializer.is_valid():
-        return piece_serializer.save(), None
+        piece_data = piece_serializer.validated_data
+        piece = Piece(**piece_data)
+        return piece, None
     else:
         return None, Response(
             piece_serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -129,6 +137,7 @@ def get_piece_key_from_players(
 @api_view(["POST"])
 def move_piece(request: Request) -> Response:
     # そもそもPython内で行う処理ならシリアライズしなくてもいいのでは？
+    print(request.session.get("turn"))
     session_table = request.session.get("table")
     if session_table is None:
         return Response(
@@ -148,7 +157,7 @@ def move_piece(request: Request) -> Response:
     if players is None:
         return Response(
             {"detail": "request.data['players'] is None"},
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     piece_key = request.data["piece_key"]
@@ -159,7 +168,7 @@ def move_piece(request: Request) -> Response:
     if player_piece is None:
         return Response(
             {"detail": "request.data['player_piece'] is None"},
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     destination, error_response = get_block_serializer(request.data["destination"])
@@ -169,12 +178,16 @@ def move_piece(request: Request) -> Response:
     if destination is None:
         return Response(
             {"detail": "request.data['destination'] is None"},
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     current_turn: int = session_table["turn"]
     # if not table.is_movable(player_piece, destination):
     #     return
+    print(players, type(players))
+    print(player_piece, type(player_piece))
+    print(piece_key, type(piece_key))
+    print(destination, type(destination))
     table.move(players[current_turn], player_piece, piece_key, destination)
     table.switch_turn()
 
