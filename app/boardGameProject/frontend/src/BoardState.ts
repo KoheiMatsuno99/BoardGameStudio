@@ -105,6 +105,25 @@ const useBoardState = (initialData: Table) => {
         }
         console.log("Selected piece: ", selectedPiece);
         console.log("Players: ", players);
+        //移動におけるバリデーション
+        const isAdjacent = Math.abs(block.address[0] - selectedPiece.position[0]) + Math.abs(block.address[1] - selectedPiece.position[1]) === 1;
+        const isSamePosition = block.address[0] === selectedPiece.position[0] && block.address[1] === selectedPiece.position[1];
+        if(!isAdjacent){
+            alert("隣接するマスにしか移動できません");
+            return;
+        }
+        if(isSamePosition){
+            alert("同じマスには移動できません");
+            return;
+        }
+        if(block.piece?.owner === selectedPiece.owner){
+            alert("自分のコマがあるマスには移動できません");
+            return;
+        }
+        //相手のコマを取る
+        if(block.piece?.owner && block.piece.owner !== selectedPiece.owner){
+            block.piece = null;
+        }
         // selectedPieceKeyを探す
         let selectedPieceKey: string | null = null;
         const currentPlayer = players.find(player => player.name === selectedPiece.owner);
