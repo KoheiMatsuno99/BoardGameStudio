@@ -35,7 +35,13 @@ class BlockSerializer(serializers.Serializer):
     piece = PieceSerializer(allow_null=True)
 
     def create(self, validated_data) -> Block:
-        piece = validated_data.pop("piece", None)
+        piece_data = validated_data.pop("piece", None)
+        if piece_data is not None:
+            piece_serializer = PieceSerializer(data=piece_data)
+            piece_serializer.is_valid(raise_exception=True)
+            piece = piece_serializer.save()
+        else:
+            piece = piece_data
         return Block(**validated_data, piece=piece)
 
     def update(self, instance, validated_data):
@@ -61,9 +67,14 @@ class PlayerSerializer(serializers.Serializer):
             if pieces_data is not None
             else None
         )
-        validated_data.pop("picked_blue_pieces_count", 0)
-        validated_data.pop("picked_red_pieces_count", 0)
-        return Player(pieces=pieces, **validated_data)
+        pb = validated_data.pop("picked_blue_pieces_count", 0)
+        pr = validated_data.pop("picked_red_pieces_count", 0)
+        return Player(
+            pieces=pieces,
+            picked_red_pieces_count=pr,
+            piecked_blue_pieces_count=pb,
+            **validated_data
+        )
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)

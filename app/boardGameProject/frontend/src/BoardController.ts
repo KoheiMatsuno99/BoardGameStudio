@@ -34,10 +34,9 @@ export class ApiGateway{
         
         return response.data;
     }
-    public static async movePiece(players: Player[], player_piece: Piece, piece_key: string , destination: Block): Promise<Table>{
+    public static async movePiece(player_piece: Piece, piece_key: string , destination: Block): Promise<Table>{
         //　リクエストに送る情報としてplayersはいらないかも
         const movementInfo = {
-            "players": players,
             "player_piece": player_piece,
             "piece_key": piece_key,
             "destination": destination

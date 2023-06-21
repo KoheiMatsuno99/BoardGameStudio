@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import Optional, Tuple
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -101,7 +102,7 @@ def get_piece_serializer(
     data: dict,
 ) -> Tuple[Optional[Piece], Optional[Response]]:
     piece_serializer = PieceSerializer(data=data)
-    if piece_serializer.is_valid():
+    if piece_serializer.is_valid(raise_exception=True):
         piece_data = piece_serializer.validated_data
         piece = Piece(**piece_data)
         return piece, None
@@ -116,7 +117,9 @@ def get_block_serializer(
 ) -> Tuple[Optional[Block], Optional[Response]]:
     block_serializer = BlockSerializer(data=data)
     if block_serializer.is_valid():
-        return block_serializer.save(), None
+        block_data = block_serializer.validated_data
+        block = Block(**block_data)
+        return block, None
     else:
         return None, Response(
             block_serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -149,14 +152,8 @@ def move_piece(request: Request) -> Response:
             {"detail": "Session data not found"}, status=status.HTTP_400_BAD_REQUEST
         )
 
-    players, error_response = get_players_serializer(request.data["players"])
     if error_response:
         return error_response
-    if players is None:
-        return Response(
-            {"detail": "request.data['players'] is None"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
 
     piece_key = request.data["piece_key"]
 
@@ -179,12 +176,22 @@ def move_piece(request: Request) -> Response:
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    current_turn: int = session_table["turn"]
-    print(players, type(players))
     print(player_piece, type(player_piece))
     print(piece_key, type(piece_key))
     print(destination, type(destination))
-    table.move(players[current_turn], player_piece, piece_key, destination)
+    if destination.piece is not None:
+        # リクエストからとってきているのでdestination.pieceはPiece型ではなくOrderedDict型
+        if isinstance(destination.piece, OrderedDict):
+            target, error_response = get_piece_serializer(destination.piece)
+        # destination.pieceがtargetなので、シリアライズが正しく行われていればtargetがNoneになることはない
+        # ここのNoneチェックはなくてもよいと思われる
+        if target is None:
+            return Response(
+                {"detail": "target is None"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        if target.get_owner() != player_piece.get_owner():
+            table.pick(destination, target)
+    table.move(player_piece, piece_key, destination)
     table.switch_turn()
 
     updated_table = TableSerializer(table).data

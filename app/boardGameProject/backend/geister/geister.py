@@ -74,7 +74,13 @@ class Block:
 class Player:
     # todo オンライン対戦時に名前被りで衝突する可能性があるので、名前ではなくidに変更or追加
     # idはプレイヤーの戦績を管理するPlayerInfoクラスからとってくる
-    def __init__(self, name: str, pieces: Optional[dict[str, Piece]] = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        pieces: Optional[dict[str, Piece]] = None,
+        picked_red_pieces_count: int = 0,
+        piecked_blue_pieces_count: int = 0,
+    ) -> None:
         self.name = name
         # pieces is Noneになるのはゲーム開始時
         if pieces is None:
@@ -87,8 +93,8 @@ class Player:
         # piece is not Noneの場合は位置情報を更新する場合を想定
         else:
             self.pieces = pieces
-        self.__picked_red_pieces_count: int = 0
-        self.__picked_blue_pieces_count: int = 0
+        self.__picked_red_pieces_count: int = picked_red_pieces_count
+        self.__picked_blue_pieces_count: int = piecked_blue_pieces_count
 
     def get_name(self) -> str:
         return self.name
@@ -203,11 +209,9 @@ class Table:
 
     # 相手の駒を奪うメソッド
     # destinationに相手の駒がある時に呼び出す
-    def _pick(self, player: Player, destination: Block) -> None:
-        target: Optional[Piece] = destination.get_piece()
-        if target is None:
-            raise ValueError("移動先に駒がありません")
+    def pick(self, destination: Block, target: Piece) -> None:
         # todo destinationにある駒(target)を相手のpiecesから削除
+        player: Player = self.__players[self.__turn]
         opponent: Player = [
             p for p in self.__players if p.get_name() != player.get_name()
         ][0]
@@ -231,7 +235,6 @@ class Table:
     # 自分のコマを動かすメソッド
     def move(
         self,
-        player: Player,
         player_piece: Optional[Piece],
         piece_key: str,
         destination: Block,
@@ -246,16 +249,17 @@ class Table:
         if self._is_escapable(self.__turn):
             # todo 脱出に成功したというポップアップを出す
             print("----------escapable----------")
-            self.__winner = player.get_name()
+            self.__winner = self.get_players()[self.get_turn()].get_name()
             # ここでフロントエンドと通信を行う
             # 通信を行うのはviews.pyの役割なのでモデルからは直接通信しないこと
             # ここで関数を抜けるとviews.pyに戻り、そこで通信を行う
             return
         print("----------not escapable----------")
         # 移動先に相手のコマがあれば奪う
-        target: Optional[Piece] = destination.get_piece()
-        if target is not None and target.get_owner() != player_piece.get_owner():
-            self._pick(player, destination)
+        # target: Optional[Piece] = destination.get_piece()
+        # print(target)
+        # if target is not None and target.get_owner() != player_piece.get_owner():
+        #     self.pick(destination, target)
         # 移動元のブロックからコマを削除
         current_position: Optional[list[int]] = player_piece.get_position()
         if current_position is None:
