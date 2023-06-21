@@ -43,8 +43,13 @@ const useBoardState = (initialData: Table) => {
     const [playerUnsetPieces, setPlayerPieces] = useState<Piece[][]>([Object.values(initialData.players[0].pieces), Object.values(initialData.players[1].pieces)]);
     const [players, setPlayers] = useState<Player[]>(initialData.players);
     const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
+    const [turn, setTurn] = useState<number>(initialData.turn);
 
     const handlePieceClick = (piece: Piece) => {
+        if(isGameStarted && players[turn].name !== piece.owner){
+            alert(`今は${players[turn].name}のターンです`);
+            return;
+        }
         setSelectedPiece(piece);
     }
 
@@ -126,7 +131,7 @@ const useBoardState = (initialData: Table) => {
         console.log("Selected piece: ", selectedPiece);
         console.log("Players: ", players);
         */
-       
+
         //移動におけるバリデーション
         if(!validateMovement(selectedPiece, block)){
             return;
@@ -187,8 +192,11 @@ const useBoardState = (initialData: Table) => {
         }
         else{
             //movePieceを呼び出す前に、フロントエンドで移動可能な場所の制御や、そもそも動かせるコマなのかをチェックする
-            ApiGateway.movePiece(players, selectedPiece, selectedPieceKey, block);
-            setSelectedPiece(null); 
+            ApiGateway.movePiece(players, selectedPiece, selectedPieceKey, block)
+            .then(res => {
+                setTurn(res.turn);
+            });
+            setSelectedPiece(null);
         }
     }
 
