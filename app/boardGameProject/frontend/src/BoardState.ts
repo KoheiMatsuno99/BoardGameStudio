@@ -51,6 +51,7 @@ const useBoardState = (initialData: Table) => {
             return;
         }
         setSelectedPiece(piece);
+        console.log("Piece Selected!")
     }
 
     const handleInitialPlacement = (block: Block) => {
@@ -122,10 +123,6 @@ const useBoardState = (initialData: Table) => {
             alert("コマを選択してください");
             return;
         }
-        if(block.piece?.owner){
-            alert("そのマスにはコマがすでに存在します");
-            return;
-        }
         /*
         デバッグ用メッセージ 
         console.log("Selected piece: ", selectedPiece);
@@ -194,7 +191,11 @@ const useBoardState = (initialData: Table) => {
     }
 
     const handleBlockClick = (block: Block) => {
-        if(isGameStarted){
+        if(selectedPiece === null && block.piece !== null){
+            handlePieceClick(block.piece);
+        }
+        else if(isGameStarted){
+            console.log("handleMovement")
             handleMovement(block);
         }
         else{

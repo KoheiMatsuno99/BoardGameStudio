@@ -16,12 +16,7 @@ const BoardRow: React.FC<{row: Block[], handleBlockClick: Function, handlePieceC
     <div className={styles.row}>
         {row.map((square, col_i) => (
             <div key={'col' + col_i} className={styles.block} onClick={() => handleBlockClick(square)}>
-                {square.piece && <img src={`../img/${square.piece.type}Ghost.jpeg`} className={styles.ghostImgSmall} onClick={
-                    (event) => {
-                        event.stopPropagation();
-                        handlePieceClick(square.piece);
-                    }
-                }/>}
+                {square.piece && <img src={`../img/${square.piece.type}Ghost.jpeg`} className={styles.ghostImgSmall}/>}
             </div>
         ))}
     </div>
