@@ -78,11 +78,11 @@ const useBoardState = (initialData: Table) => {
             alert("初期位置は手前の2行の範囲にコマを置いてください");
             return;
         }
-        else if(playerIndex === 0 && selectedRow === rowStart && (selectedCol === colStart || selectedCol === colEnd)){
+        else if(playerIndex === 0 && selectedRow === rowEnd && (selectedCol === colStart || selectedCol === colEnd)){
             alert("相手プレイヤーの脱出マスを初期位置に設定することはできません")
             return;
         }
-        else if(playerIndex === 1 && selectedRow === rowEnd && (selectedCol === colStart || selectedCol === colEnd)){
+        else if(playerIndex === 1 && selectedRow === rowStart && (selectedCol === colStart || selectedCol === colEnd)){
             alert("相手プレイヤーの脱出マスを初期位置に設定することはできません")
             return;
         }
