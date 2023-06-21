@@ -101,7 +101,7 @@ const useBoardState = (initialData: Table) => {
     }
 
     const isAdjacentBlock = (piecePosition: number[], blockPosition: number[]) => 
-    Math.abs(blockPosition[0] - piecePosition[0]) + Math.abs(blockPosition[1] - piecePosition[1]) === 1;
+    Math.abs(blockPosition[0] - piecePosition[0]) + Math.abs(blockPosition[1] - piecePosition[1]) <= 1;
 
     const isSameBlock = (piecePosition: number[], blockPosition: number[]) =>
         blockPosition[0] === piecePosition[0] && blockPosition[1] === piecePosition[1];
@@ -112,7 +112,7 @@ const useBoardState = (initialData: Table) => {
             return false;
         }
         if(isSameBlock(selectedPiece.position, block.address)){
-            alert("同じマスには移動できません");
+            alert("コマを選択中です。同じマスには移動できません");
             return false;
         }
         return true;
