@@ -127,7 +127,7 @@ class Table:
         self,
         players: list[Player],
         table: Optional[list[list[Block]]] = None,
-        turn: Optional[int] = None,
+        turn: int = 0,
     ) -> None:
         self.__players = players
         self.__table = (
@@ -142,7 +142,7 @@ class Table:
             # self.__players[1]の逃げられる場所は[(7, 0), (7, 7)]
             1: [(7, 0), (7, 7)],
         }
-        self.__turn: int = turn if turn is not None else 0
+        self.__turn: int = turn
 
     @property
     def players(self) -> list[Player]:
@@ -244,10 +244,12 @@ class Table:
         # 仮置き オンライン対戦時に名前の衝突が起きた場合バグを生む可能性
         # この実装では脱出可能なマスにコマがある場合、次のターンで自動的に勝利になる
         if self._is_escapable(self.__turn):
-            # todo 脱出されるに成功したというポップアップを出す
+            # todo 脱出に成功したというポップアップを出す
             print("----------escapable----------")
             self.__winner = player.get_name()
             # ここでフロントエンドと通信を行う
+            # 通信を行うのはviews.pyの役割なのでモデルからは直接通信しないこと
+            # ここで関数を抜けるとviews.pyに戻り、そこで通信を行う
             return
         print("----------not escapable----------")
         # 移動先に相手のコマがあれば奪う

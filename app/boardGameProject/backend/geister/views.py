@@ -136,8 +136,6 @@ def get_piece_key_from_players(
 
 @api_view(["POST"])
 def move_piece(request: Request) -> Response:
-    # そもそもPython内で行う処理ならシリアライズしなくてもいいのでは？
-    print(request.session.get("turn"))
     session_table = request.session.get("table")
     if session_table is None:
         return Response(
@@ -182,8 +180,6 @@ def move_piece(request: Request) -> Response:
         )
 
     current_turn: int = session_table["turn"]
-    # if not table.is_movable(player_piece, destination):
-    #     return
     print(players, type(players))
     print(player_piece, type(player_piece))
     print(piece_key, type(piece_key))
