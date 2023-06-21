@@ -136,12 +136,6 @@ const useBoardState = (initialData: Table) => {
         if(!validateMovement(selectedPiece, block)){
             return;
         }
-        /* todo turnによる制御 
-        turnが0ならplayers[0]のターン、1ならplayers[1]のターン
-        turnが0のときはplayers[0]のコマしか動かせない
-        turnが1のときはplayers[1]のコマしか動かせない        
-        */
-
         if(block.piece?.owner === selectedPiece.owner){
             alert("自分のコマがあるマスには移動できません");
             return;
@@ -191,7 +185,6 @@ const useBoardState = (initialData: Table) => {
             return
         }
         else{
-            //movePieceを呼び出す前に、フロントエンドで移動可能な場所の制御や、そもそも動かせるコマなのかをチェックする
             ApiGateway.movePiece(players, selectedPiece, selectedPieceKey, block)
             .then(res => {
                 setTurn(res.turn);
