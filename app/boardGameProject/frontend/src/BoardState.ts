@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ApiGateway } from "./BoardController";
+import useValidateMovement from "./useValidateMovement";
 
 export interface Piece {
     owner: string;
@@ -40,6 +41,7 @@ const useBoardState = (initialData: Table) => {
         );
     const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
     const [boardInfo, setBoardInfo] = useState<Block[][]>(initialBoard);
+    // まだ初期配置が完了していないコマを管理する
     const [playerUnsetPieces, setPlayerPieces] = useState<Piece[][]>([Object.values(initialData.players[0].pieces), Object.values(initialData.players[1].pieces)]);
     const [players, setPlayers] = useState<Player[]>(initialData.players);
     const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
@@ -102,23 +104,7 @@ const useBoardState = (initialData: Table) => {
         setSelectedPiece(null);
     }
 
-    const isAdjacentBlock = (piecePosition: number[], blockPosition: number[]) => 
-    Math.abs(blockPosition[0] - piecePosition[0]) + Math.abs(blockPosition[1] - piecePosition[1]) <= 1;
-
-    const isSameBlock = (piecePosition: number[], blockPosition: number[]) =>
-        blockPosition[0] === piecePosition[0] && blockPosition[1] === piecePosition[1];
-
-    const validateMovement = (selectedPiece: Piece, block: Block) => {
-        if(!isAdjacentBlock(selectedPiece.position, block.address)){
-            alert("隣接するマスにしか移動できません");
-            return false;
-        }
-        if(isSameBlock(selectedPiece.position, block.address)){
-            alert("コマを選択中です。同じマスには移動できません");
-            return false;
-        }
-        return true;
-    }
+    const validateMovement = useValidateMovement();
 
     const handleMovement = (block: Block) => {
         if(selectedPiece === null){
