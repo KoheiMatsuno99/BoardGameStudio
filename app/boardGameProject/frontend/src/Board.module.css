@@ -40,6 +40,10 @@
     height: 12.5%; 
 }
 
+.rotate{
+    transform: rotate(180deg);
+}
+
 
 /* For smartphones */
 @media screen and (max-width: 767px) {
