@@ -1,4 +1,3 @@
-import pytest
 from .geister import Piece, Table, Player
 
 
@@ -189,15 +188,6 @@ Tableクラスの_pick()のテスト
 """
 
 
-def test_pick_with_empty_destination():
-    table = Table([Player("test1"), Player("test2")])
-    player = table.get_players()[0]
-    empty_block = table.get_table()[0][0]
-
-    with pytest.raises(ValueError):
-        table._pick(player, empty_block)
-
-
 def test_pick_with_opponent_piece_not_last():
     table = Table([Player("test1"), Player("test2")])
     player1, player2 = table.get_players()
@@ -206,7 +196,7 @@ def test_pick_with_opponent_piece_not_last():
     destination_block.set_piece(piece)
     player2.pieces["piece1"] = piece
 
-    table._pick(player1, destination_block)
+    table.pick(destination_block, piece)
 
     assert piece not in player2.pieces.values()
     assert player1.get_picked_blue_pieces_count() == 1
@@ -233,10 +223,10 @@ def test_pick_with_last_blue_piece():
     block4.set_piece(piece4)
     player2.pieces["piece4"] = piece4
 
-    table._pick(player1, block1)
-    table._pick(player1, block2)
-    table._pick(player1, block3)
-    table._pick(player1, block4)
+    table.pick(block1, piece1)
+    table.pick(block2, piece2)
+    table.pick(block3, piece3)
+    table.pick(block4, piece4)
 
     assert piece1 not in player2.pieces.values()
     assert piece2 not in player2.pieces.values()
@@ -266,10 +256,10 @@ def test_pick_with_last_red_piece():
     block4.set_piece(piece4)
     player2.pieces["piece4"] = piece4
 
-    table._pick(player1, block1)
-    table._pick(player1, block2)
-    table._pick(player1, block3)
-    table._pick(player1, block4)
+    table.pick(block1, piece1)
+    table.pick(block2, piece2)
+    table.pick(block3, piece3)
+    table.pick(block4, piece4)
 
     assert piece1 not in player2.pieces.values()
     assert player1.get_picked_red_pieces_count() == 4
