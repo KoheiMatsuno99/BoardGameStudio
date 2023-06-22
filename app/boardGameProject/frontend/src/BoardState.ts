@@ -139,16 +139,6 @@ const useBoardState = (initialData: Table) => {
             alert("自分のコマがあるマスには移動できません");
             return;
         }
-        // 相手のコマを取る
-        // todo イベントの判定をコマからマスにする（今の状態ではコマの画像にあたるため、イベントが発火しない）
-        if(block.piece?.owner && block.piece.owner !== selectedPiece.owner){
-            /*
-            todo 取ったコマは自分のコマ置き場に移動（コマは再利用できないことに注意）
-            */
-           setTempBlock(block);
-           const newBlock = {...block, piece: selectedPiece};
-           setBoardInfo(board => board.map(row => row.map(b => b === block ? newBlock : b)));
-        }
         // selectedPieceKeyを探す
         let selectedPieceKey: string | null = null;
         const currentPlayer = players.find(player => player.name === selectedPiece.owner);
@@ -180,6 +170,16 @@ const useBoardState = (initialData: Table) => {
                 return obj;
             }, {} as {[key: string]: Piece})
         })));
+        // 相手のコマを取る
+        // todo イベントの判定をコマからマスにする（今の状態ではコマの画像にあたるため、イベントが発火しない）
+        if(block.piece?.owner && block.piece.owner !== selectedPiece.owner){
+            /*
+            todo 取ったコマは自分のコマ置き場に移動（コマは再利用できないことに注意）
+            */
+           setTempBlock(block);
+           const newBlock = {...block, piece: selectedPiece};
+           setBoardInfo(board => board.map(row => row.map(b => b === block ? newBlock : b)));
+        }
         if (selectedPieceKey === null) {
             alert("あなたのコマではないので動かせません");
             setSelectedPiece(null);
