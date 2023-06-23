@@ -215,7 +215,9 @@ const useBoardState = (initialData: Table) => {
         handlePieceClick,
         handleBlockClick,
         isGameStarted,
-        setIsGameStarted
+        setIsGameStarted,
+        turn,
+        setTurn
     };
 };
 

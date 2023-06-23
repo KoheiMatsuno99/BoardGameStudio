@@ -186,23 +186,23 @@ class Table:
         self.__turn = 1 if self.__turn == 0 else 0
 
     # CPUがコマの初期位置を決定するメソッド
-    def initialize_pieces_position(self) -> None:
-        for i in range(len(self.__players)):
-            # オフラインモード時のCPUは初期位置をランダムに決定
-            # todo プレイヤーは手動で初期位置を決定するようにする
-            # todo オンラインモードでは二人のプレイヤーがそれぞれ手動で初期位置を決定する
-            # todo 各プレイヤーの初期位置設定は非同期処理で行い、一方のプレイヤーが相手の配置完了まで待たないようにする
-            for piece in self.__players[i].pieces.values():
-                # 各コマは同じ位置には置けない
-                # [0, 0]から[7, 1]までの範囲でランダムに決定
-                # 8個のコマを全て置くまでループ
-                while True:
-                    x: int = random.randint(0, 7)
-                    y: int = random.randint(0, 1) if i == 1 else random.randint(6, 7)
-                    if self.__table[x][y].get_piece() is None:
-                        self.__table[x][y].set_piece(piece)
-                        piece.set_position([x, y])
-                        break
+    def initialize_cpu_pieces_position(self) -> None:
+        # オフラインモード時のCPUは初期位置をランダムに決定
+        # todo プレイヤーは手動で初期位置を決定するようにする
+        # todo オンラインモードでは二人のプレイヤーがそれぞれ手動で初期位置を決定する
+        # todo 各プレイヤーの初期位置設定は非同期処理で行い、一方のプレイヤーが相手の配置完了まで待たないようにする
+        for piece in self.__players[1].pieces.values():
+            # 各コマは同じ位置には置けない
+            # 8個のコマを全て置くまでループ
+            while True:
+                x: int = random.randint(0, 7)
+                y: int = random.randint(0, 1)
+                if self.__table[x][y].get_piece() is None and (
+                    (x == 0 and y == 0) or (x == 7 and y == 0)
+                ):
+                    self.__table[x][y].set_piece(piece)
+                    piece.set_position([x, y])
+                    break
 
     def get_piece_at(self, position: list[int]) -> Optional[Piece]:
         return self.__table[position[0]][position[1]].get_piece()
@@ -249,7 +249,7 @@ class Table:
         if self._is_escapable(self.__turn):
             # todo 脱出に成功したというポップアップを出す
             print("----------escapable----------")
-            self.__winner = self.get_players()[self.get_turn()].get_name()
+            self.__winner = self.__players[self.__turn].get_name()
             # ここでフロントエンドと通信を行う
             # 通信を行うのはviews.pyの役割なのでモデルからは直接通信しないこと
             # ここで関数を抜けるとviews.pyに戻り、そこで通信を行う
@@ -281,8 +281,37 @@ class Table:
             self.__table[destination_position[0]][destination_position[1]].get_address()
         )
 
-    # コマの移動範囲の制御はフロントエンドに移した方が良いかも
+    def cpu_move(self) -> None:
+        print("----------cpu_move----------")
+        # cpuのコマをランダムに選択
+        while True:
+            cpu_piece: Piece = random.choice(list(self.__players[1].pieces.values()))
+            destination_x: int = random.randint(0, 7)
+            destination_y: int = random.randint(0, 7)
+            destination: Block = self.__table[destination_x][destination_y]
+            if self.is_movable(cpu_piece, destination):
+                break
 
+        piece_key: str = ""
+        for piece_k, piece_v in self.__players[1].pieces.items():
+            if (
+                piece_v.get_owner() == cpu_piece.get_owner()
+                and piece_v.get_type() == cpu_piece.get_type()
+                and piece_v.get_position() == cpu_piece.get_position()
+            ):
+                piece_key = piece_k
+                break
+
+        if piece_key == "":
+            raise ValueError("piece_keyが空です")
+
+        target: Optional[Piece] = destination.get_piece()
+        if target is not None and target.get_owner() != cpu_piece.get_owner():
+            self.pick(destination, target)
+
+        self.move(cpu_piece, piece_key, destination)
+
+    # CPUが選択したコマが移動可能かどうかを判定するメソッド（プレイヤーの移動チェックはフロントエンドで行う）
     def is_movable(self, piece: Piece, destination: Block) -> bool:
         # 現在位置の上下左右1マスより離れていたら移動不可
         current_position: Optional[list[int]] = piece.get_position()
@@ -301,8 +330,6 @@ class Table:
             return True
         # destinationに自分のコマがある場合は移動不可
         if piece.get_owner() == target_piece.get_owner():
-            print(piece.get_owner())
-            print(target_piece.get_owner())
             return False
         return True
 

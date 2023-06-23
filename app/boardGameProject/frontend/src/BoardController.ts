@@ -47,4 +47,11 @@ export class ApiGateway{
         console.log("----------");
         return response.data;
     }
+    public static async cpuMovePiece(): Promise<Table>{
+        const response = await axios.post('http://localhost:8000/cpu-movement/',{},{withCredentials: true});
+        console.log("cpu moved");
+        console.log(response);
+        console.log("----------");
+        return response.data;
+    }
 }

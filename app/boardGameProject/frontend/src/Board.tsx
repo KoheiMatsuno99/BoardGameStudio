@@ -31,7 +31,9 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
         handlePieceClick,
         handleBlockClick,
         isGameStarted,
-        setIsGameStarted
+        setIsGameStarted,
+        turn,
+        setTurn
     } = useBoardState(initialData);
 
     React.useEffect(() => {
@@ -47,6 +49,14 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
             console.log(gameData);
             ApiGateway.notifyGetReady(gameData);
             setIsGameStarted(true);
+        }
+    })
+
+    React.useEffect(() => {
+        if (turn === 1){
+            setTimeout(() => {}, 1000);
+            ApiGateway.cpuMovePiece();
+            setTurn(0);
         }
     })
 

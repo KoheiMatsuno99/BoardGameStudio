@@ -24,6 +24,8 @@ def start_game(request: Request) -> Response:
     if player_serializer.is_valid():
         players = player_serializer.save()
         table = Table(players)
+        # オフラインモードのみplayer[1]がcpu固定なので、cpuの初期配置を行う
+        # table.initialize_cpu_pieces_position()
         table_serializer = TableSerializer(table)
         serialized_data = table_serializer.data
         request.session["table"] = serialized_data
@@ -139,6 +141,7 @@ def get_piece_key_from_players(
 
 @api_view(["POST"])
 def move_piece(request: Request) -> Response:
+    print(f"Session ID move_piece: {request.session.session_key}")
     session_table = request.session.get("table")
     if session_table is None:
         return Response(
@@ -184,7 +187,6 @@ def move_piece(request: Request) -> Response:
         if isinstance(destination.piece, OrderedDict):
             target, error_response = get_piece_serializer(destination.piece)
         # destination.pieceがtargetなので、シリアライズが正しく行われていればtargetがNoneになることはない
-        # ここのNoneチェックはなくてもよいと思われる
         if target is None:
             return Response(
                 {"detail": "target is None"}, status=status.HTTP_400_BAD_REQUEST
@@ -194,6 +196,28 @@ def move_piece(request: Request) -> Response:
     table.move(player_piece, piece_key, destination)
     table.switch_turn()
 
+    updated_table = TableSerializer(table).data
+    request.session["table"] = updated_table
+    return Response(updated_table, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def cpu_move_piece(request: Request) -> Response:
+    print(f"Session ID cpu_move_piece: {request.session.session_key}")
+    session_table = request.session.get("table")
+    if session_table is None:
+        return Response(
+            {"detail": "session_table not found"}, status=status.HTTP_400_BAD_REQUEST
+        )
+    table, error_response = get_table_serializer(session_table)
+    if error_response:
+        return error_response
+    if table is None:
+        return Response(
+            {"detail": "failed deserialize"}, status=status.HTTP_400_BAD_REQUEST
+        )
+    table.cpu_move()
+    table.switch_turn()
     updated_table = TableSerializer(table).data
     request.session["table"] = updated_table
     return Response(updated_table, status=status.HTTP_200_OK)
