@@ -74,20 +74,28 @@
 /* For PCs(Laptop) */
 @media screen and (min-width: 913px) and (max-width: 1024px) {
     .container{
-        height: 115vh;
+        height: 110vh;
+        padding: 1rem;
     }
     .board{
         width: 50vw;
     }
-    .capturedPiecesBottom, .capturedPiecesTop{
+    .capturedPiecesBottom{
         background-color: bisque;
         width: 50vw;
+        height: 15vh;
+    }
+    .capturedPiecesTop{
+        background-color: bisque;
+        width: 50vw;
+        height: 15vh;
     }
 }
 /* For PCs(Desktop) */
 @media screen and (min-width: 1025px) {
     .container{
-        height: 115vh;
+        height: 110vh;
+        padding: 1rem;
     }
     .board{
         width: 45vw;
@@ -95,6 +103,7 @@
     .capturedPiecesBottom, .capturedPiecesTop{
         background-color: bisque;
         width: 45vw;
+        height: 11vh;
     }
 }
 
