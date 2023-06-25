@@ -199,7 +199,7 @@ class Table:
                 x: int = random.randint(0, 7)
                 y: int = random.randint(0, 1)
                 if self.__table[x][y].get_piece() is None and (
-                    (x != 0 and y != 0) and (x != 7 and y != 0)
+                    not (x == 0 and y == 0) and not (x == 7 and y == 0)
                 ):
                     self.__table[x][y].set_piece(piece)
                     piece.set_position([x, y])
