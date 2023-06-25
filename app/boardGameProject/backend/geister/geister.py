@@ -198,7 +198,7 @@ class Table:
                 x: int = random.randint(0, 7)
                 y: int = random.randint(0, 1)
                 if self.__table[x][y].get_piece() is None and (
-                    (x == 0 and y == 0) or (x == 7 and y == 0)
+                    (x != 0 and y != 0) and (x != 7 and y != 0)
                 ):
                     self.__table[x][y].set_piece(piece)
                     piece.set_position([x, y])
@@ -216,7 +216,11 @@ class Table:
             p for p in self.__players if p.get_name() != player.get_name()
         ][0]
         for key, piece in opponent.pieces.items():
-            if piece == target:
+            if (
+                piece.get_owner() == target.get_owner()
+                and piece.get_type() == target.get_type()
+                and piece.get_position() == target.get_position()
+            ):
                 opponent.pieces.pop(key)
                 break
         target.set_position(None)

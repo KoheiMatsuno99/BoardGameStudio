@@ -23,5 +23,5 @@ urlpatterns = [
     path("start/", start_game, name="start"),
     path("setup/", get_ready, name="setup"),
     path("movement/", move_piece, name="movement"),
-    path("cpu-movement/", cpu_move_piece, name="cpu-movement")
+    path("cpu-movement/", cpu_move_piece, name="cpu-movement"),
 ]
