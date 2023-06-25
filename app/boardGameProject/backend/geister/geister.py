@@ -254,7 +254,6 @@ class Table:
         piece_key: str,
         destination: Block,
     ) -> None:
-        # print("----------moving----------")
         if player_piece is None:
             raise ValueError("動かすコマを指定してください")
         if destination is None:
@@ -269,14 +268,8 @@ class Table:
             # 通信を行うのはviews.pyの役割なのでモデルからは直接通信しないこと
             # ここで関数を抜けるとviews.pyに戻り、そこで通信を行う
             return
-        # print("----------not escapable----------")
-        # 移動先に相手のコマがあれば奪う
-        # target: Optional[Piece] = destination.get_piece()
-        # print(target)
-        # if target is not None and target.get_owner() != player_piece.get_owner():
-        #     self.pick(destination, target)
-        # 移動元のブロックからコマを削除
 
+        # 移動元のブロックからコマを削除
         current_position: Optional[list[int]] = player_piece.get_position()
         if current_position is None:
             raise ValueError("player_pieceのpositionがNoneです")
@@ -295,9 +288,6 @@ class Table:
         # 移動先のブロックにコマを配置
         destination_position: list[int] = destination.get_address()
         player_piece.set_position(destination_position)
-        # piecesのvalueがPieceクラスではなくOrderedDictクラスになっているため、set_pieceを取得できない
-        # print(self.__turn)
-        # print(self.get_players()[self.__turn].get_pieces())
         self.get_players()[self.__turn].get_pieces()[piece_key].set_position(
             destination_position
         )
