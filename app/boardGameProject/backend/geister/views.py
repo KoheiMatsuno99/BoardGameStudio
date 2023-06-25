@@ -141,7 +141,6 @@ def get_piece_key_from_players(
 
 @api_view(["POST"])
 def move_piece(request: Request) -> Response:
-    print(f"Session ID move_piece: {request.session.session_key}")
     session_table = request.session.get("table")
     if session_table is None:
         return Response(
@@ -168,7 +167,7 @@ def move_piece(request: Request) -> Response:
             {"detail": "request.data['player_piece'] is None"},
             status=status.HTTP_400_BAD_REQUEST,
         )
-
+    print("request.data['destination']", request.data["destination"])
     destination, error_response = get_block_serializer(request.data["destination"])
 
     if error_response:
@@ -178,10 +177,6 @@ def move_piece(request: Request) -> Response:
             {"detail": "request.data['destination'] is None"},
             status=status.HTTP_400_BAD_REQUEST,
         )
-
-    print(player_piece, type(player_piece))
-    print(piece_key, type(piece_key))
-    print(destination, type(destination))
     if destination.piece is not None:
         # リクエストからとってきているのでdestination.pieceはPiece型ではなくOrderedDict型
         if isinstance(destination.piece, OrderedDict):
@@ -203,7 +198,6 @@ def move_piece(request: Request) -> Response:
 
 @api_view(["POST"])
 def cpu_move_piece(request: Request) -> Response:
-    print(f"Session ID cpu_move_piece: {request.session.session_key}")
     session_table = request.session.get("table")
     if session_table is None:
         return Response(

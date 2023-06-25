@@ -184,6 +184,7 @@ class Table:
 
     def switch_turn(self) -> None:
         self.__turn = 1 if self.__turn == 0 else 0
+        print(f'次は{self.__turn} {self.__players[self.__turn].get_name()}のターン')
 
     # CPUがコマの初期位置を決定するメソッド
     def initialize_cpu_pieces_position(self) -> None:
@@ -222,6 +223,7 @@ class Table:
                 and piece.get_position() == target.get_position()
             ):
                 opponent.pieces.pop(key)
+                print(f'{player.get_name()}は{opponent.get_name()}のコマ{key}を取った！')
                 break
         target.set_position(None)
         self.__table[destination.get_address()[0]][
@@ -243,7 +245,7 @@ class Table:
         piece_key: str,
         destination: Block,
     ) -> None:
-        print("----------moving----------")
+        # print("----------moving----------")
         if player_piece is None:
             raise ValueError("動かすコマを指定してください")
         if destination is None:
@@ -252,29 +254,42 @@ class Table:
         # この実装では脱出可能なマスにコマがある場合、次のターンで自動的に勝利になる
         if self._is_escapable(self.__turn):
             # todo 脱出に成功したというポップアップを出す
-            print("----------escapable----------")
+            # print("----------escapable----------")
             self.__winner = self.__players[self.__turn].get_name()
             # ここでフロントエンドと通信を行う
             # 通信を行うのはviews.pyの役割なのでモデルからは直接通信しないこと
             # ここで関数を抜けるとviews.pyに戻り、そこで通信を行う
             return
-        print("----------not escapable----------")
+        # print("----------not escapable----------")
         # 移動先に相手のコマがあれば奪う
         # target: Optional[Piece] = destination.get_piece()
         # print(target)
         # if target is not None and target.get_owner() != player_piece.get_owner():
         #     self.pick(destination, target)
         # 移動元のブロックからコマを削除
+
         current_position: Optional[list[int]] = player_piece.get_position()
         if current_position is None:
             raise ValueError("player_pieceのpositionがNoneです")
+        print(
+            "移動元のコマの所有者",
+            self.__table[current_position[0]][current_position[1]].get_piece().get_owner()
+        )
+        print(
+            "移動元のコマの種類",
+            self.__table[current_position[0]][current_position[1]].get_piece().get_type()
+        )
+        print(
+            "移動元のアドレス",
+            self.__table[current_position[0]][current_position[1]].get_address()
+        )
         self.__table[current_position[0]][current_position[1]].set_piece(None)
         # 移動先のブロックにコマを配置
         destination_position: list[int] = destination.get_address()
         player_piece.set_position(destination_position)
         # piecesのvalueがPieceクラスではなくOrderedDictクラスになっているため、set_pieceを取得できない
-        print(self.__turn)
-        print(self.get_players()[self.__turn].get_pieces())
+        # print(self.__turn)
+        # print(self.get_players()[self.__turn].get_pieces())
         self.get_players()[self.__turn].get_pieces()[piece_key].set_position(
             destination_position
         )
@@ -282,6 +297,15 @@ class Table:
             player_piece
         )
         print(
+            "移動先のコマの所有者",
+            self.__table[destination_position[0]][destination_position[1]].get_piece().get_owner()
+        )
+        print(
+            "移動先のコマの種類",
+            self.__table[destination_position[0]][destination_position[1]].get_piece().get_type()
+        )
+        print(
+            "移動先のアドレス",
             self.__table[destination_position[0]][destination_position[1]].get_address()
         )
 
@@ -340,7 +364,6 @@ class Table:
     def _is_escapable(self, turn: int) -> bool:
         for position in self.__escapable_positions[turn]:
             piece: Optional[Piece] = self.__table[position[0]][position[1]].get_piece()
-            print(type(piece))
             if piece is None:
                 print("piece is None")
                 continue
