@@ -184,7 +184,7 @@ class Table:
 
     def switch_turn(self) -> None:
         self.__turn = 1 if self.__turn == 0 else 0
-        print(f'次は{self.__turn} {self.__players[self.__turn].get_name()}のターン')
+        print(f"次は{self.__turn} {self.__players[self.__turn].get_name()}のターン")
 
     # CPUがコマの初期位置を決定するメソッド
     def initialize_cpu_pieces_position(self) -> None:
@@ -216,15 +216,24 @@ class Table:
         opponent: Player = [
             p for p in self.__players if p.get_name() != player.get_name()
         ][0]
+        key_to_remove: str = ""
         for key, piece in opponent.pieces.items():
             if (
                 piece.get_owner() == target.get_owner()
                 and piece.get_type() == target.get_type()
                 and piece.get_position() == target.get_position()
             ):
-                opponent.pieces.pop(key)
-                print(f'{player.get_name()}は{opponent.get_name()}のコマ{key}を取った！')
+                key_to_remove = key
+                print(f"{player.get_name()}は{opponent.get_name()}のコマ{key}を取った！")
                 break
+
+        if key_to_remove == "":
+            raise Exception("相手のコマが見つかりませんでした")
+        else:
+            print("key_to_remove", key_to_remove)
+            opponent.pieces.pop(key_to_remove)
+            print(opponent.pieces)
+
         target.set_position(None)
         self.__table[destination.get_address()[0]][
             destination.get_address()[1]
@@ -271,17 +280,16 @@ class Table:
         current_position: Optional[list[int]] = player_piece.get_position()
         if current_position is None:
             raise ValueError("player_pieceのpositionがNoneです")
-        print(
-            "移動元のコマの所有者",
-            self.__table[current_position[0]][current_position[1]].get_piece().get_owner()
-        )
-        print(
-            "移動元のコマの種類",
-            self.__table[current_position[0]][current_position[1]].get_piece().get_type()
-        )
+        selected_piece: Optional[Piece] = self.__table[current_position[0]][
+            current_position[1]
+        ].get_piece()
+        if selected_piece is None:
+            raise ValueError("移動元のブロックにコマがありません")
+        print("移動元のコマの所有者", selected_piece.get_owner())
+        print("移動元のコマの種類", selected_piece.get_type())
         print(
             "移動元のアドレス",
-            self.__table[current_position[0]][current_position[1]].get_address()
+            self.__table[current_position[0]][current_position[1]].get_address(),
         )
         self.__table[current_position[0]][current_position[1]].set_piece(None)
         # 移動先のブロックにコマを配置
@@ -296,17 +304,18 @@ class Table:
         self.__table[destination_position[0]][destination_position[1]].set_piece(
             player_piece
         )
-        print(
-            "移動先のコマの所有者",
-            self.__table[destination_position[0]][destination_position[1]].get_piece().get_owner()
-        )
-        print(
-            "移動先のコマの種類",
-            self.__table[destination_position[0]][destination_position[1]].get_piece().get_type()
-        )
+        moved_piece: Optional[Piece] = self.__table[destination_position[0]][
+            destination_position[1]
+        ].get_piece()
+        if moved_piece is None:
+            raise ValueError("移動先のブロックにコマがありません")
+        print("移動先のコマの所有者", moved_piece.get_owner())
+        print("移動先のコマの種類", moved_piece.get_type())
         print(
             "移動先のアドレス",
-            self.__table[destination_position[0]][destination_position[1]].get_address()
+            self.__table[destination_position[0]][
+                destination_position[1]
+            ].get_address(),
         )
 
     def cpu_move(self) -> None:
@@ -365,7 +374,6 @@ class Table:
         for position in self.__escapable_positions[turn]:
             piece: Optional[Piece] = self.__table[position[0]][position[1]].get_piece()
             if piece is None:
-                print("piece is None")
                 continue
             if (
                 piece is not None
