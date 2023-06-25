@@ -46,8 +46,6 @@ const useBoardState = (initialData: Table) => {
     const [players, setPlayers] = useState<Player[]>(initialData.players);
     const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
     const [turn, setTurn] = useState<number>(initialData.turn);
-    //フロントエンドでは相手のコマを取ったことにするが、バックエンドではまだ取っていないので、バックエンドに送るデータを一時的に保存する
-    const [tempBlock, setTempBlock] = useState<Block | null>(null);
 
     const handlePieceClick = (piece: Piece) => {
         if(isGameStarted && players[turn].name !== piece.owner){
@@ -162,7 +160,6 @@ const useBoardState = (initialData: Table) => {
             /*
             todo 取ったコマは自分のコマ置き場に移動（コマは再利用できないことに注意）
             */
-           setTempBlock(block);
            const newBlock = {...block, piece: selectedPiece};
            setBoardInfo(board => board.map(row => row.map(b => b === block ? newBlock : b)));
         }
@@ -171,23 +168,14 @@ const useBoardState = (initialData: Table) => {
             setSelectedPiece(null);
             return
         }
-        //　移動先に相手のコマがない場合
-        else if (tempBlock === null){
+        else{
             ApiGateway.movePiece(selectedPiece, selectedPieceKey, block)
             .then(res => {
+                setPlayers(res.players);
+                setBoardInfo(res.table);
                 setTurn(res.turn);
             });
-            setSelectedPiece(null);
-        }
-        // 移動先に相手のコマがある場合
-        else{
-            console.log("tempBlock: ", tempBlock);
-            ApiGateway.movePiece(selectedPiece, selectedPieceKey, tempBlock)
-            .then(res => {
-                setTurn(res.turn);
-            });
-            setTempBlock(null);
-            setSelectedPiece(null);
+            setSelectedPiece(null);            
         }
     }
 
@@ -196,7 +184,6 @@ const useBoardState = (initialData: Table) => {
             handlePieceClick(block.piece);
         }
         else if(isGameStarted){
-            console.log("handleMovement")
             handleMovement(block);
         }
         else{

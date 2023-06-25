@@ -16,7 +16,12 @@ const BoardRow: React.FC<{row: Block[], handleBlockClick: Function, handlePieceC
     <div className={styles.row}>
         {row.map((square, col_i) => (
             <div key={'col' + col_i} className={styles.block} onClick={() => handleBlockClick(square)}>
-                {square.piece && <img src={`../img/${square.piece.type}Ghost.jpeg`} className={styles.ghostImgSmall}/>}
+                {/*
+                todo
+                1. square.piece.owner === "cpu"とハードコードしているのをplayers[1]に直す
+                2. square.piece.ownerもisPlayer1などの変数にする
+                */}
+                {square.piece && <img src={square.piece.owner === "cpu" ? `../img/unknownGhost.jpeg` : `../img/${square.piece.type}Ghost.jpeg`} className={square.piece.owner === "cpu" ? `${styles.ghostImgSmall} ${styles.rotate}` : styles.ghostImgSmall }/>}
             </div>
         ))}
     </div>
@@ -26,8 +31,10 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
     const {
         selectedPiece,
         boardInfo,
+        setBoardInfo,
         playerUnsetPieces,
         players,
+        setPlayers,
         handlePieceClick,
         handleBlockClick,
         isGameStarted,
@@ -47,18 +54,24 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
                 turn: 0
             }
             console.log(gameData);
-            ApiGateway.notifyGetReady(gameData);
-            setIsGameStarted(true);
+            ApiGateway.notifyGetReady(gameData).then((res) => {
+                setPlayers(res.players);
+                setBoardInfo(res.table);
+                setIsGameStarted(true);
+            })
         }
     })
 
     React.useEffect(() => {
         if (turn === 1){
-            setTimeout(() => {}, 1000);
-            ApiGateway.cpuMovePiece();
-            setTurn(0);
+            ApiGateway.cpuMovePiece().then((res) => {
+                setTimeout(() => {}, 2000);
+                setPlayers(res.players);
+                setBoardInfo(res.table);
+                setTurn(res.turn);
+            })
         }
-    })
+    }, [turn])
 
     return (
         <div className={styles.container}>
