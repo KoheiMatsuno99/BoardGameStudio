@@ -24,38 +24,6 @@
     color: white;
 }
 
-/* For smartphones */
-/* @media screen and (max-height: 659px) and (max-width: 767px) {
-    .container{
-        height: 170vh;
-    }
-    .button{
-        margin: 1rem;
-    }
-}
-
-@media screen and (min-height: 660px) and (max-height: 750px) {
-    .container{
-        height: 140vh;
-        padding: 1rem;
-    }
-    .button{
-        margin-left: 1.5rem;
-        margin-right: 1.5rem;
-    }
-}
-
-@media screen and (min-height: 751px) and (max-height: 912px) {
-    .container{
-        height: 115vh;
-        padding: 1.5rem;
-    }
-    .button{
-        margin-left: 2rem;
-        margin-right: 2rem;
-    }
-} */
-
 /* For Smartphones */
 @media screen and (max-width: 359px) {
     .container{
