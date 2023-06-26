@@ -1,13 +1,9 @@
-import { useState } from "react";
-import {Table, Player, Piece, Block} from './BoardState';
+import {Player, Piece, Block} from './BoardState';
 
 const useInitialPlacement = (
-    initialData: Table,
     setBoardInfo: React.Dispatch<React.SetStateAction<Block[][]>>,
     setPlayerPieces: React.Dispatch<React.SetStateAction<Piece[][]>>,
     setPlayers: React.Dispatch<React.SetStateAction<Player[]>>,
-    setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>,
-    selectedPiece: Piece | null,
     setSelectedPiece: React.Dispatch<React.SetStateAction<Piece | null>>,
     players: Player[],
 ) => {
@@ -22,10 +18,6 @@ const useInitialPlacement = (
         }
         const playerIndex = players.findIndex(player => player.name === selectedPiece.owner);
         if(playerIndex === -1){
-            alert("そのコマはすでに配置されています。残りのコマを配置してください。");
-            return false;
-        }
-        if (selectedPiece.position !== null){
             alert("そのコマはすでに配置されています。残りのコマを配置してください。");
             return false;
         }

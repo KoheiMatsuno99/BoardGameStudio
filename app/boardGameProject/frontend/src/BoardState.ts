@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { ApiGateway } from "./BoardController";
-import useValidateMovement from "./useValidateMovement";
 import useInitialPlacement from "./useInitialPlacement";
+import useMovement from "./useMovement";
 
 export interface Piece {
     owner: string;
@@ -59,99 +58,31 @@ const useBoardState = (initialData: Table) => {
     }
 
     const handleInitialPlacement = useInitialPlacement(
-        initialData,
         setBoardInfo,
         setPlayerPieces,
         setPlayers,
-        setIsGameStarted,
-        selectedPiece,
         setSelectedPiece,
         players,
     );
 
-    const validateMovement = useValidateMovement();
-
-    const handleMovement = (block: Block) => {
-        if(selectedPiece === null){
-            alert("コマを選択してください");
-            return;
-        }
-        /*
-        デバッグ用メッセージ 
-        console.log("Selected piece: ", selectedPiece);
-        console.log("Players: ", players);
-        */
-
-        //移動におけるバリデーション
-        if(!validateMovement(selectedPiece, block)){
-            return;
-        }
-        if(block.piece?.owner === selectedPiece.owner){
-            alert("自分のコマがあるマスには移動できません");
-            return;
-        }
-        // selectedPieceKeyを探す
-        let selectedPieceKey: string | null = null;
-        const currentPlayer = players.find(player => player.name === selectedPiece.owner);
-        console.log("Current player: ", currentPlayer);
-        if (currentPlayer) {
-            const keys = Object.keys(currentPlayer.pieces);
-            const values = Object.values(currentPlayer.pieces);
-            for (let i = 0; i < keys.length; i++) {
-                const value = values[i];
-                if (value.owner === selectedPiece.owner && value.type === selectedPiece.type && value.position[0] === selectedPiece.position[0] && value.position[1] === selectedPiece.position[1]) {
-                    selectedPieceKey = keys[i];
-                    console.log("selectedPieceKey: ", selectedPieceKey);
-                    break;
-                }
-            }
-        }
-        let pieceOfPositionUpdated = {...selectedPiece, position: block.address}
-        setBoardInfo(board => board.map(
-            row => row.map(
-                b => {
-                    if (b === block) return { ...b, piece:  pieceOfPositionUpdated};
-                    if (b.piece === selectedPiece) return { ...b, piece: null};
-                    return b;
-                })));
-        setPlayers(players => players.map(player => ({
-            ...player,
-            pieces: Object.entries(player.pieces).reduce((obj, [key, value]) => {
-                obj[key] = value === selectedPiece ? pieceOfPositionUpdated : value;
-                return obj;
-            }, {} as {[key: string]: Piece})
-        })));
-        // 相手のコマを取る
-        // todo イベントの判定をコマからマスにする（今の状態ではコマの画像にあたるため、イベントが発火しない）
-        if(block.piece?.owner && block.piece.owner !== selectedPiece.owner){
-            /*
-            todo 取ったコマは自分のコマ置き場に移動（コマは再利用できないことに注意）
-            */
-           const newBlock = {...block, piece: selectedPiece};
-           setBoardInfo(board => board.map(row => row.map(b => b === block ? newBlock : b)));
-        }
-        if (selectedPieceKey === null) {
-            alert("あなたのコマではないので動かせません");
-            setSelectedPiece(null);
-            return
-        }
-        else{
-            ApiGateway.movePiece(selectedPiece, selectedPieceKey, block)
-            .then(res => {
-                setPlayers(res.players);
-                setBoardInfo(res.table);
-                setTurn(res.turn);
-            });
-            setSelectedPiece(null);            
-        }
-    }
+    const handleMovement = useMovement(
+        players,
+        setPlayers,
+        selectedPiece,
+        setSelectedPiece,
+        boardInfo,
+        setBoardInfo,
+        turn,
+        setTurn
+    );
 
     const handleBlockClick = (block: Block) => {
         if(selectedPiece === null && block.piece !== null){
             handlePieceClick(block.piece);
         }
         else if(isGameStarted){
-            handleMovement(block);
+            // 呼び出し先でselectedPieceのnullチェックを行うので!で問題なし
+            handleMovement(selectedPiece!, block);
         }
         else{
             // 呼び出し先でselectedPieceのnullチェックを行うので!で問題なし
