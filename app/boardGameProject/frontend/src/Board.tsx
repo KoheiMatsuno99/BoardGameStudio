@@ -4,7 +4,7 @@ import { ApiGateway } from "./BoardController";
 import { Table, Player, Piece, Block, BoardProps } from "./BoardState";
 import useBoardState from "./BoardState";
 
-const PieceDisplay: React.FC<{pieces: Piece[], player: Player, handlePieceClick: Function, isPlayer1: boolean}> = ({pieces, player, handlePieceClick, isPlayer1}) => (
+const InitialPieceDisplay: React.FC<{pieces: Piece[], player: Player, handlePieceClick: Function, isPlayer1: boolean}> = ({pieces, player, handlePieceClick, isPlayer1}) => (
     <div className={styles.dFlex}>
         {Object.values(pieces).filter(piece => piece.owner === player.name).map((piece , index) => (
             <img key={player.name + index} src={isPlayer1 ? `../img/unknownGhost.jpeg` :`../img/${piece.type}Ghost.jpeg`} className={isPlayer1 ? `${styles.ghostImg} ${styles.rotate}` : styles.ghostImg} onClick={() => handlePieceClick(piece)}></img>
@@ -65,7 +65,6 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
     React.useEffect(() => {
         if (turn === 1){
             ApiGateway.cpuMovePiece().then((res) => {
-                setTimeout(() => {}, 2000);
                 setPlayers(res.players);
                 setBoardInfo(res.table);
                 setTurn(res.turn);
@@ -76,7 +75,7 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
     return (
         <div className={styles.container}>
             <div className={styles.capturedPiecesTop}>
-                <PieceDisplay pieces={playerUnsetPieces[1]} player={initialData.players[1]} handlePieceClick={handlePieceClick} isPlayer1={true}/>
+                <InitialPieceDisplay pieces={playerUnsetPieces[1]} player={initialData.players[1]} handlePieceClick={handlePieceClick} isPlayer1={true}/>
             </div>
             <div className={styles.board}>
                 {boardInfo.map((row, row_i) => (
@@ -84,7 +83,7 @@ const Board: React.FC<BoardProps> = ({initialData}) => {
                 ))}
             </div>
             <div className={styles.capturedPiecesBottom}>
-                <PieceDisplay pieces={playerUnsetPieces[0]} player={initialData.players[0]} handlePieceClick={handlePieceClick} isPlayer1={false}/>
+                <InitialPieceDisplay pieces={playerUnsetPieces[0]} player={initialData.players[0]} handlePieceClick={handlePieceClick} isPlayer1={false}/>
             </div>
         </div>
     )
