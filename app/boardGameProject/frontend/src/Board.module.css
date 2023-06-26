@@ -37,7 +37,7 @@
 .capturedPiecesBottom .ghostImg {
     flex: none; 
     width: 12.5%; 
-    height: 12.5%; 
+    /* height: 12.5%;  */
 }
 
 .rotate{
@@ -53,7 +53,7 @@
     .capturedPiecesTop,
     .capturedPiecesBottom{
         background-color: bisque;
-        height: 16vh;
+        /* height: 16vh; */
         width: 100%;
         }
 }
@@ -66,7 +66,7 @@
     .capturedPiecesTop,
     .capturedPiecesBottom{
         background-color: bisque;
-        height: 11vh;
+        /* height: 11vh; */
         width: 100%;
         }
 }
@@ -83,12 +83,12 @@
     .capturedPiecesBottom{
         background-color: bisque;
         width: 50vw;
-        height: 15vh;
+        /* height: 15vh; */
     }
     .capturedPiecesTop{
         background-color: bisque;
         width: 50vw;
-        height: 15vh;
+        /* height: 15vh; */
     }
 }
 /* For PCs(Desktop) */
@@ -103,7 +103,7 @@
     .capturedPiecesBottom, .capturedPiecesTop{
         background-color: bisque;
         width: 45vw;
-        height: 11vh;
+        /* height: 11vh; */
     }
 }
 
