@@ -198,11 +198,11 @@ class Table:
             while True:
                 x: int = random.randint(0, 7)
                 y: int = random.randint(0, 1)
-                if self.__table[x][y].get_piece() is None and (
+                if self.__table[y][x].get_piece() is None and (
                     not (x == 0 and y == 0) and not (x == 7 and y == 0)
                 ):
-                    self.__table[x][y].set_piece(piece)
-                    piece.set_position([x, y])
+                    self.__table[y][x].set_piece(piece)
+                    piece.set_position([y, x])
                     break
 
     def get_piece_at(self, position: list[int]) -> Optional[Piece]:
