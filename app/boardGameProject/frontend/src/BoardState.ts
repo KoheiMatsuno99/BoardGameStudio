@@ -31,18 +31,28 @@ export interface Table{
 
 export interface BoardProps {
     initialData: Table;
+    isOffline: boolean;
 }
 
-const useBoardState = (initialData: Table) => {
-    const initialBoard: Block[][] = Array.from(
+const useBoardState = (initialData: Table, isOffline: boolean) => {
+
+    const initialBoard: Block[][] = isOffline ? Array.from(
         { length: 8 }, (_, i) => 
-        Array.from({ length: 8 }, (_, j) => 
-        ({ address: [i, j], piece: null }))
-        );
+        Array.from({ length: 8 }, (_, j) => {
+            const piece = initialData.table[i][j].piece;
+            return { address: [i, j], piece: piece ? { ...piece } : null };
+        })
+    ) : Array.from(
+        { length: 8 }, (_, i) => 
+        Array.from({ length: 8 }, (_, j) => {
+            return { address: [i, j], piece: null };
+        })
+    );
+
     const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
     const [boardInfo, setBoardInfo] = useState<Block[][]>(initialBoard);
     // まだ初期配置が完了していないコマを管理する
-    const [playerUnsetPieces, setPlayerPieces] = useState<Piece[][]>([Object.values(initialData.players[0].pieces), Object.values(initialData.players[1].pieces)]);
+    const [playerUnsetPieces, setPlayerPieces] = useState<Piece[][]>([Object.values(initialData.players[0].pieces), isOffline ? [] : Object.values(initialData.players[1].pieces)]);
     const [players, setPlayers] = useState<Player[]>(initialData.players);
     const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
     const [turn, setTurn] = useState<number>(initialData.turn);
@@ -63,6 +73,7 @@ const useBoardState = (initialData: Table) => {
         setPlayers,
         setSelectedPiece,
         players,
+        //isGameStarted,
     );
 
     const handleMovement = useMovement(
@@ -103,7 +114,7 @@ const useBoardState = (initialData: Table) => {
         isGameStarted,
         setIsGameStarted,
         turn,
-        setTurn
+        setTurn,
     };
 };
 

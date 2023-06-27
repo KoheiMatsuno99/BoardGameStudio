@@ -5,7 +5,10 @@ import Board from "./Board";
 import { Table } from "./BoardState";
 import { ApiGateway } from "./BoardController";
 
-const GeisterRule: React.FC = () => {
+interface GeisterRuleProps{
+    isOffline: boolean;
+}
+const GeisterRule: React.FC<GeisterRuleProps> = (GeisterRuleProps) => {
     const [doesGoBack, setGoback] = React.useState(false);
     const [doesPlay, setPlay] = React.useState(false);
     const [initialTable, setInitialTable] = React.useState<Table | null>(null);
@@ -24,7 +27,7 @@ const GeisterRule: React.FC = () => {
         if(initialTable === null){
             throw new Error("initialTable is null"); 
         }
-        return <Board initialData={initialTable} />
+        return <Board initialData={initialTable} isOffline={GeisterRuleProps.isOffline}/>
     }
     return (
         <div className={styles.container}>
