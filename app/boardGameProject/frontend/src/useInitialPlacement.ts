@@ -6,6 +6,7 @@ const useInitialPlacement = (
     setPlayers: React.Dispatch<React.SetStateAction<Player[]>>,
     setSelectedPiece: React.Dispatch<React.SetStateAction<Piece | null>>,
     players: Player[],
+    //isGameStarted: boolean
 ) => {
     const validateInitialPlacement = (selectedPiece: Piece, block: Block) => {
         if (!selectedPiece){
@@ -14,6 +15,10 @@ const useInitialPlacement = (
         }
         if (block.piece){
             alert("そのマスにはコマがすでに存在します");
+            return false;
+        }
+        if (selectedPiece.position !== null){
+            alert("そのコマはすでに配置されています。残りのコマを配置してください。");
             return false;
         }
         const playerIndex = players.findIndex(player => player.name === selectedPiece.owner);
