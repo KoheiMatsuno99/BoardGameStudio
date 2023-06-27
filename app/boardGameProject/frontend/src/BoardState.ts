@@ -91,6 +91,10 @@ const useBoardState = (initialData: Table, isOffline: boolean) => {
         if(selectedPiece === null && block.piece !== null){
             handlePieceClick(block.piece);
         }
+        else if (selectedPiece === null){
+            alert("コマを選択してください");
+            return;
+        }
         else if(isGameStarted){
             // 呼び出し先でselectedPieceのnullチェックを行うので!で問題なし
             handleMovement(selectedPiece!, block);
