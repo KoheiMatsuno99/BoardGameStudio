@@ -31,11 +31,11 @@ export interface Table{
 
 export interface BoardProps {
     initialData: Table;
-    isOffline: boolean;
+    playMode: string;
 }
 
-const useBoardState = (initialData: Table, isOffline: boolean) => {
-
+const useBoardState = (initialData: Table, playMode: string) => {
+    const isOffline = playMode == "vscpu";
     const initialBoard: Block[][] = isOffline ? Array.from(
         { length: 8 }, (_, i) => 
         Array.from({ length: 8 }, (_, j) => {

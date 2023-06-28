@@ -27,7 +27,7 @@ const BoardRow: React.FC<{row: Block[], handleBlockClick: Function, handlePieceC
     </div>
 );
 
-const Board: React.FC<BoardProps> = ({initialData, isOffline}) => {
+const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
     const {
         selectedPiece,
         boardInfo,
@@ -41,7 +41,7 @@ const Board: React.FC<BoardProps> = ({initialData, isOffline}) => {
         setIsGameStarted,
         turn,
         setTurn,
-    } = useBoardState(initialData, isOffline);
+    } = useBoardState(initialData, playMode);
 
     React.useEffect(() => {
         const allPiecesSet = playerUnsetPieces.every(pieces => pieces.length === 0);

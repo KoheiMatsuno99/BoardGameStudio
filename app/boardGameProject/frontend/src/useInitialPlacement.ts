@@ -6,7 +6,6 @@ const useInitialPlacement = (
     setPlayers: React.Dispatch<React.SetStateAction<Player[]>>,
     setSelectedPiece: React.Dispatch<React.SetStateAction<Piece | null>>,
     players: Player[],
-    //isGameStarted: boolean
 ) => {
     const validateInitialPlacement = (selectedPiece: Piece, block: Block) => {
         if (!selectedPiece){
