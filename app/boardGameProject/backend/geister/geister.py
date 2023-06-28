@@ -1,5 +1,5 @@
 import random
-from typing import Optional
+from typing import Optional, Tuple
 
 
 class Piece:
@@ -310,24 +310,37 @@ class Table:
 
     def cpu_move(self) -> None:
         print("----------cpu_move----------")
-        # cpuのコマをランダムに選択
+        # cpuのコマを選択
         while True:
-            cpu_piece: Piece = random.choice(list(self.__players[1].pieces.values()))
-            destination_x: int = random.randint(0, 7)
-            destination_y: int = random.randint(0, 7)
-            destination: Block = self.__table[destination_x][destination_y]
+            piece_key: str = ""
+            if self.__players[1].get_picked_red_pieces_count() < 3:
+                piece_key, cpu_piece, destination = self._search_oppenent_blue_piece()
+            else:
+                cpu_piece = random.choice(list(self.__players[1].pieces.values()))
+                current_position = cpu_piece.get_position()
+                if current_position is None:
+                    raise Exception("選択されたコマはすでに相手に取られています")
+                destination_x: int = random.randint(0, 7)
+                destination_y: int = random.randint(0, 7)
+
+                # cpu_pieceが赤なら前に出す
+                if cpu_piece.get_type() == "red" and current_position[0] <= 6:
+                    destination_y = current_position[0] + 1
+                    destination_x = current_position[1]
+                destination = self.__table[destination_y][destination_x]
+
             if self.is_movable(cpu_piece, destination):
                 break
 
-        piece_key: str = ""
-        for piece_k, piece_v in self.__players[1].pieces.items():
-            if (
-                piece_v.get_owner() == cpu_piece.get_owner()
-                and piece_v.get_type() == cpu_piece.get_type()
-                and piece_v.get_position() == cpu_piece.get_position()
-            ):
-                piece_key = piece_k
-                break
+        if piece_key == "":
+            for piece_k, piece_v in self.__players[1].pieces.items():
+                if (
+                    piece_v.get_owner() == cpu_piece.get_owner()
+                    and piece_v.get_type() == cpu_piece.get_type()
+                    and piece_v.get_position() == cpu_piece.get_position()
+                ):
+                    piece_key = piece_k
+                    break
 
         if piece_key == "":
             raise ValueError("piece_keyが空です")
@@ -337,6 +350,50 @@ class Table:
             self.pick(destination, target)
 
         self.move(cpu_piece, piece_key, destination)
+
+    # どのコマを選ぶか決定するアルゴリズム
+    # cpuはプレイヤーの青のコマを取ることを優先する
+    def _search_oppenent_blue_piece(self) -> Tuple[str, Piece, Block]:
+        cpu_piece: Optional[Piece] = None
+        cpu_piece_key: str = ""
+        destination: Optional[Block] = None
+        for piece_key, piece_value in self.__players[1].pieces.items():
+            current_position: Optional[list[int]] = piece_value.get_position()
+            if current_position is None:
+                raise ValueError("選択したコマはすでにとられています")
+            destination_position_list: list[list[int]] = [
+                [current_position[0] + 1, current_position[1]],
+                [current_position[0] - 1, current_position[1]],
+                [current_position[0], current_position[1] + 1],
+                [current_position[0], current_position[1] - 1],
+            ]
+            for destination_position in destination_position_list:
+                if destination_position[0] not in range(0, 8) or destination_position[
+                    1
+                ] not in range(0, 8):
+                    continue
+                target: Optional[Piece] = self.__table[destination_position[0]][
+                    destination_position[1]
+                ].get_piece()
+                if target is None:
+                    continue
+                if (
+                    target.get_type() == "blue"
+                    and target.get_owner() == self.__players[0].get_name()
+                ):
+                    cpu_piece_key = piece_key
+                    cpu_piece = piece_value
+                    destination = self.__table[destination_position[1]][
+                        destination_position[0]
+                    ]
+                    break
+        if cpu_piece is None:
+            cpu_piece = random.choice(list(self.__players[1].pieces.values()))
+        if destination is None:
+            destination_x: int = random.randint(0, 7)
+            destination_y: int = random.randint(0, 7)
+            destination = self.__table[destination_y][destination_x]
+        return (cpu_piece_key, cpu_piece, destination)
 
     # CPUが選択したコマが移動可能かどうかを判定するメソッド（プレイヤーの移動チェックはフロントエンドで行う）
     def is_movable(self, piece: Piece, destination: Block) -> bool:
