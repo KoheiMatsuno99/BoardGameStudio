@@ -81,7 +81,6 @@ const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
                 <InitialPieceDisplay pieces={playerUnsetPieces[1]} player={initialData.players[1]} handlePieceClick={handlePieceClick} isPlayer1={true}/>
             </div>
             <div className={styles.board}>
-                {isGameOver ? <GameSetPopUp winner={winner}/> : null}
                 {boardInfo.map((row, row_i) => (
                     <BoardRow key={'row' + row_i} row={row} handleBlockClick={handleBlockClick} handlePieceClick={handlePieceClick}/>
                 ))}
@@ -89,6 +88,7 @@ const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
             <div className={styles.capturedPiecesBottom}>
                 <InitialPieceDisplay pieces={playerUnsetPieces[0]} player={initialData.players[0]} handlePieceClick={handlePieceClick} isPlayer1={false}/>
             </div>
+            {isGameOver && <GameSetPopUp winner={winner} />}
         </div>
     )
 }
