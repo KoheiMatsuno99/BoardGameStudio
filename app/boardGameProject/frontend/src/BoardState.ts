@@ -89,6 +89,8 @@ const useBoardState = (initialData: Table, playMode: string) => {
         isGameOver,
         setIsGameOver,
         setWinner,
+        playerPickedPieces,
+        setPlayerPickedPieces,
     );
 
     const handleBlockClick = (block: Block) => {
@@ -124,7 +126,10 @@ const useBoardState = (initialData: Table, playMode: string) => {
         turn,
         setTurn,
         isGameOver,
-        winner
+        setIsGameOver,
+        winner,
+        setWinner,
+        playerPickedPieces,
     };
 };
 

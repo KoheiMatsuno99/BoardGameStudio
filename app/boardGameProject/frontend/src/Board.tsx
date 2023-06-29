@@ -28,6 +28,15 @@ const BoardRow: React.FC<{row: Block[], handleBlockClick: Function, handlePieceC
     </div>
 );
 
+// const PickedPiecesArea: React.FC<{pieces: Piece[], player: Player}> = ({pieces, player}) => (
+//     <div className={styles.dFlex}>
+//         {pieces.filter(piece => piece.owner === player.name).map((piece , index) => (
+//             <img key={player.name + index} src={`../img/${piece.type}Ghost.jpeg`} className={styles.ghostImg}></img>
+//         ))}
+//     </div>
+// );
+
+
 const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
     const {
         selectedPiece,
@@ -43,7 +52,10 @@ const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
         turn,
         setTurn,
         isGameOver,
-        winner
+        setIsGameOver,
+        winner,
+        setWinner,
+        playerPickedPieces
     } = useBoardState(initialData, playMode);
 
     React.useEffect(() => {
@@ -71,6 +83,10 @@ const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
                 setPlayers(res.players);
                 setBoardInfo(res.table);
                 setTurn(res.turn);
+                if (res.winner !== ""){
+                    setIsGameOver(true);
+                    setWinner(res.winner);
+                }
             })
         }
     }, [turn])
@@ -79,6 +95,7 @@ const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
         <div className={styles.container}>
             <div className={styles.capturedPiecesTop}>
                 <InitialPieceDisplay pieces={playerUnsetPieces[1]} player={initialData.players[1]} handlePieceClick={handlePieceClick} isPlayer1={true}/>
+                {/*<PickedPiecesArea pieces={playerPickedPieces[1]} player={initialData.players[1]}/>*/}            
             </div>
             <div className={styles.board}>
                 {boardInfo.map((row, row_i) => (
@@ -87,7 +104,9 @@ const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
             </div>
             <div className={styles.capturedPiecesBottom}>
                 <InitialPieceDisplay pieces={playerUnsetPieces[0]} player={initialData.players[0]} handlePieceClick={handlePieceClick} isPlayer1={false}/>
+                {/*<PickedPiecesArea pieces={playerPickedPieces[0]} player={initialData.players[0]}/>*/}
             </div>
+
             {isGameOver && <GameSetPopUp winner={winner} />}
         </div>
     )
