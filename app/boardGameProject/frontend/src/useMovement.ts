@@ -11,6 +11,9 @@ const useMovement = (
     setBoardInfo: React.Dispatch<React.SetStateAction<Block[][]>>,
     turn: number,
     setTurn: React.Dispatch<React.SetStateAction<number>>,
+    isGameOver: boolean,
+    setIsGameOver: React.Dispatch<React.SetStateAction<boolean>>,
+    setWinner: React.Dispatch<React.SetStateAction<string>>,
 ) => {
     const handleMovement = (selectedPiece: Piece, block: Block) => {
         const validateMovement = useValidateMovement();
@@ -68,6 +71,10 @@ const useMovement = (
                 setPlayers(res.players);
                 setBoardInfo(res.table);
                 setTurn(res.turn);
+                if (res.winner !== ""){
+                    setIsGameOver(true);
+                    setWinner(res.winner);
+                }
             });
             setSelectedPiece(null);            
         }

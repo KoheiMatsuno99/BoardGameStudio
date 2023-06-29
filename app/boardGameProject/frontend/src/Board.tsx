@@ -3,6 +3,7 @@ import styles from "./Board.module.css";
 import { ApiGateway } from "./BoardController";
 import { Table, Player, Piece, Block, BoardProps } from "./BoardState";
 import useBoardState from "./BoardState";
+import GameSetPopUp from "./GameSetPopUp";
 
 const InitialPieceDisplay: React.FC<{pieces: Piece[], player: Player, handlePieceClick: Function, isPlayer1: boolean}> = ({pieces, player, handlePieceClick, isPlayer1}) => (
     <div className={styles.dFlex}>
@@ -41,6 +42,8 @@ const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
         setIsGameStarted,
         turn,
         setTurn,
+        isGameOver,
+        winner
     } = useBoardState(initialData, playMode);
 
     React.useEffect(() => {
@@ -78,6 +81,7 @@ const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
                 <InitialPieceDisplay pieces={playerUnsetPieces[1]} player={initialData.players[1]} handlePieceClick={handlePieceClick} isPlayer1={true}/>
             </div>
             <div className={styles.board}>
+                {isGameOver ? <GameSetPopUp winner={winner}/> : null}
                 {boardInfo.map((row, row_i) => (
                     <BoardRow key={'row' + row_i} row={row} handleBlockClick={handleBlockClick} handlePieceClick={handlePieceClick}/>
                 ))}

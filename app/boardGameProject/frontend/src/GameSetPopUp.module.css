@@ -1,0 +1,12 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 50%;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background-color: rgb(241, 202, 154);
+    z-index: 10;
+}

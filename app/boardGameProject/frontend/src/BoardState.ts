@@ -57,6 +57,8 @@ const useBoardState = (initialData: Table, playMode: string) => {
     const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
     const [turn, setTurn] = useState<number>(initialData.turn);
     const [playerPickedPieces, setPlayerPickedPieces] = useState<Piece[][]>([[], []]);
+    const [isGameOver, setIsGameOver] = useState<boolean>(false);
+    const [winner, setWinner] = useState<string>("");
 
     const handlePieceClick = (piece: Piece) => {
         if(isGameStarted && players[turn].name !== piece.owner){
@@ -73,7 +75,6 @@ const useBoardState = (initialData: Table, playMode: string) => {
         setPlayers,
         setSelectedPiece,
         players,
-        //isGameStarted,
     );
 
     const handleMovement = useMovement(
@@ -84,7 +85,10 @@ const useBoardState = (initialData: Table, playMode: string) => {
         boardInfo,
         setBoardInfo,
         turn,
-        setTurn
+        setTurn,
+        isGameOver,
+        setIsGameOver,
+        setWinner,
     );
 
     const handleBlockClick = (block: Block) => {
@@ -119,6 +123,8 @@ const useBoardState = (initialData: Table, playMode: string) => {
         setIsGameStarted,
         turn,
         setTurn,
+        isGameOver,
+        winner
     };
 };
 
