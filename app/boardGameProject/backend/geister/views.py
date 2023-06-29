@@ -25,7 +25,7 @@ def start_game(request: Request) -> Response:
         players = player_serializer.save()
         table = Table(players)
         # オフラインモードのみplayer[1]がcpu固定なので、cpuの初期配置を行う
-        # table.initialize_cpu_pieces_position()
+        table.initialize_cpu_pieces_position()
         table_serializer = TableSerializer(table)
         serialized_data = table_serializer.data
         request.session["table"] = serialized_data
