@@ -1,7 +1,5 @@
 import random
 from typing import Optional, Tuple
-import time
-import sys
 
 
 class Piece:
@@ -313,35 +311,23 @@ class Table:
     def cpu_move(self) -> None:
         print("----------cpu_move----------")
         # cpuのコマを選択
-        loop_start = time.time()
         while True:
             piece_key: str = ""
             if self.__players[1].get_picked_red_pieces_count() < 3:
-                piece_key, cpu_piece, destination = self._search_oppenent_blue_piece()
+                piece_key, cpu_piece, destination, does_capture = self._search_oppenent_blue_piece()
             else:
                 cpu_piece = random.choice(list(self.__players[1].pieces.values()))
                 destination_x: int = random.randint(0, 7)
                 destination_y: int = random.randint(0, 7)
                 destination = self.__table[destination_y][destination_x]
             # 赤だったら前に出す
-            if cpu_piece.get_type() == "red" and destination.get_address()[0] <= 6:
+            if not does_capture and cpu_piece.get_type() == "red" and destination.get_address()[0] <= 6:
                 destination = self.__table[destination.get_address()[0] + 1][
                     destination.get_address()[1]
                 ]
 
             if self.is_movable(cpu_piece, destination):
                 break
-
-            now = time.time()
-            if now - loop_start > 3:
-                print("cpu_moveが3秒以上かかりました.無限ループの可能性があります")
-                print("piece_key", piece_key)
-                print("cpu_piece.get_position()", cpu_piece.get_position())
-                print("destination.get_address()", destination.get_address())
-
-            if now - loop_start > 6:
-                print("cpu_moveが6秒以上かかりました.無限ループの可能性があるのでプログラムを終了します")
-                sys.exit()
 
         if piece_key == "":
             for piece_k, piece_v in self.__players[1].pieces.items():
@@ -364,10 +350,11 @@ class Table:
 
     # どのコマを選ぶか決定するアルゴリズム
     # cpuはプレイヤーの青のコマを取ることを優先する
-    def _search_oppenent_blue_piece(self) -> Tuple[str, Piece, Block]:
+    def _search_oppenent_blue_piece(self) -> Tuple[str, Piece, Block, bool]:
         cpu_piece: Optional[Piece] = None
         cpu_piece_key: str = ""
         destination: Optional[Block] = None
+        does_capture: bool = False
         for piece_key, piece_value in self.__players[1].pieces.items():
             current_position: Optional[list[int]] = piece_value.get_position()
             if current_position is None:
@@ -394,9 +381,10 @@ class Table:
                 ):
                     cpu_piece_key = piece_key
                     cpu_piece = piece_value
-                    destination = self.__table[destination_position[1]][
-                        destination_position[0]
+                    destination = self.__table[destination_position[0]][
+                        destination_position[1]
                     ]
+                    does_capture = True
                     break
         # 射程内に青のコマがなかったらランダムに選択
         if cpu_piece is None:
@@ -405,7 +393,7 @@ class Table:
             destination_x: int = random.randint(0, 7)
             destination_y: int = random.randint(0, 7)
             destination = self.__table[destination_y][destination_x]
-        return (cpu_piece_key, cpu_piece, destination)
+        return (cpu_piece_key, cpu_piece, destination, does_capture)
 
     # CPUが選択したコマが移動可能かどうかを判定するメソッド（プレイヤーの移動チェックはフロントエンドで行う）
     def is_movable(self, piece: Piece, destination: Block) -> bool:
