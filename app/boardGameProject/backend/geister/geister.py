@@ -1,5 +1,7 @@
 import random
 from typing import Optional, Tuple
+import time
+import sys
 
 
 class Piece:
@@ -311,26 +313,35 @@ class Table:
     def cpu_move(self) -> None:
         print("----------cpu_move----------")
         # cpuのコマを選択
+        loop_start = time.time()
         while True:
             piece_key: str = ""
             if self.__players[1].get_picked_red_pieces_count() < 3:
                 piece_key, cpu_piece, destination = self._search_oppenent_blue_piece()
             else:
                 cpu_piece = random.choice(list(self.__players[1].pieces.values()))
-                current_position = cpu_piece.get_position()
-                if current_position is None:
-                    raise Exception("選択されたコマはすでに相手に取られています")
                 destination_x: int = random.randint(0, 7)
                 destination_y: int = random.randint(0, 7)
-
-                # cpu_pieceが赤なら前に出す
-                if cpu_piece.get_type() == "red" and current_position[0] <= 6:
-                    destination_y = current_position[0] + 1
-                    destination_x = current_position[1]
                 destination = self.__table[destination_y][destination_x]
+            # 赤だったら前に出す
+            if cpu_piece.get_type() == "red" and destination.get_address()[0] <= 6:
+                destination = self.__table[destination.get_address()[0] + 1][
+                    destination.get_address()[1]
+                ]
 
             if self.is_movable(cpu_piece, destination):
                 break
+
+            now = time.time()
+            if now - loop_start > 3:
+                print("cpu_moveが3秒以上かかりました.無限ループの可能性があります")
+                print("piece_key", piece_key)
+                print("cpu_piece.get_position()", cpu_piece.get_position())
+                print("destination.get_address()", destination.get_address())
+
+            if now - loop_start > 6:
+                print("cpu_moveが6秒以上かかりました.無限ループの可能性があるのでプログラムを終了します")
+                sys.exit()
 
         if piece_key == "":
             for piece_k, piece_v in self.__players[1].pieces.items():
@@ -387,6 +398,7 @@ class Table:
                         destination_position[0]
                     ]
                     break
+        # 射程内に青のコマがなかったらランダムに選択
         if cpu_piece is None:
             cpu_piece = random.choice(list(self.__players[1].pieces.values()))
         if destination is None:
