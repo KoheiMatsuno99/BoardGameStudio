@@ -314,14 +314,23 @@ class Table:
         while True:
             piece_key: str = ""
             if self.__players[1].get_picked_red_pieces_count() < 3:
-                piece_key, cpu_piece, destination, does_capture = self._search_oppenent_blue_piece()
+                (
+                    piece_key,
+                    cpu_piece,
+                    destination,
+                    does_capture,
+                ) = self._search_oppenent_blue_piece()
             else:
                 cpu_piece = random.choice(list(self.__players[1].pieces.values()))
                 destination_x: int = random.randint(0, 7)
                 destination_y: int = random.randint(0, 7)
                 destination = self.__table[destination_y][destination_x]
             # 赤だったら前に出す
-            if not does_capture and cpu_piece.get_type() == "red" and destination.get_address()[0] <= 6:
+            if (
+                not does_capture
+                and cpu_piece.get_type() == "red"
+                and destination.get_address()[0] <= 6
+            ):
                 destination = self.__table[destination.get_address()[0] + 1][
                     destination.get_address()[1]
                 ]
