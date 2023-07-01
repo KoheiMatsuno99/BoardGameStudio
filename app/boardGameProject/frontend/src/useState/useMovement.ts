@@ -13,7 +13,7 @@ const useMovement = (
   playerPickedPieces: Piece[][],
   setPlayerPickedPieces: React.Dispatch<React.SetStateAction<Piece[][]>>
 ) => {
-  const handleMovement = (selectedPiece: Piece, block: Block) => {
+  const useHandleMovement = (selectedPiece: Piece, block: Block) => {
     const validateMovement = useValidateMovement();
     if (!validateMovement(selectedPiece, block)) {
       return;
@@ -103,7 +103,7 @@ const useMovement = (
       setSelectedPiece(null);
     }
   };
-  return handleMovement;
+  return useHandleMovement;
 };
 
 export default useMovement;
