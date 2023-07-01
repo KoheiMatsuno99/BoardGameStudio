@@ -1,0 +1,6 @@
+# Pythonのキャッシュとコンパイル済みファイルを無視する
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.vscode

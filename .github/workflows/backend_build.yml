@@ -1,0 +1,31 @@
+name: backend_build
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip 
+          pip install -r requirements.txt
+      - name: Lint
+        run: | 
+          black --line-length 119 app/boardGameProject/backend
+          flake8 --config=.github/workflows/.flake8 app/boardGameProject/backend
+          isort app/boardGameProject/backend 
+      - name: Run pytest
+        run: pytest app/boardGameProject/backend/geister/tests.py
