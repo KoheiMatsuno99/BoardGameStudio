@@ -80,13 +80,9 @@ const useBoardState = (initialData: Table, playMode: string) => {
     const handleMovement = useMovement(
         players,
         setPlayers,
-        selectedPiece,
         setSelectedPiece,
-        boardInfo,
         setBoardInfo,
-        turn,
         setTurn,
-        isGameOver,
         setIsGameOver,
         setWinner,
         playerPickedPieces,

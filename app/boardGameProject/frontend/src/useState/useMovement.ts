@@ -5,13 +5,9 @@ import useValidateMovement from "./useValidateMovement";
 const useMovement = (
     players: Player[],
     setPlayers: React.Dispatch<React.SetStateAction<Player[]>>,
-    selectedPiece: Piece | null,
     setSelectedPiece: React.Dispatch<React.SetStateAction<Piece | null>>,
-    boardInfo: Block[][],
     setBoardInfo: React.Dispatch<React.SetStateAction<Block[][]>>,
-    turn: number,
     setTurn: React.Dispatch<React.SetStateAction<number>>,
-    isGameOver: boolean,
     setIsGameOver: React.Dispatch<React.SetStateAction<boolean>>,
     setWinner: React.Dispatch<React.SetStateAction<string>>,
     playerPickedPieces: Piece[][],
