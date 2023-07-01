@@ -1,4 +1,4 @@
-import {Table, Player, Piece, Block} from './BoardState';
+import {Table, Player, Piece, Block} from './useState/BoardState';
 import axios from 'axios';
 
 export class ApiGateway{

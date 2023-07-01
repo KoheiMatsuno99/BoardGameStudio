@@ -1,7 +1,7 @@
 import React from "react";
 import Lobby from "./Lobby";
-import styles from "./GameSetPopUp.module.css";
-import { PlayContext } from "./components/PlayContext";
+import styles from "../styles/GameSetPopUp.module.css";
+import { PlayContext } from "./PlayContext";
 
 interface GameSetPopUpProps {
     winner: string;

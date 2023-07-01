@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import styles from "./Lobby.module.css";
+import styles from "../styles/Lobby.module.css";
 import GeisterRule from "./GeisterRule";
-import { PlayContext } from "./components/PlayContext";
+import { PlayContext } from "./PlayContext";
 
 const Lobby: React.FC = () => {
     const [showGeisterRule, setGeisterRule] = React.useState<boolean>(false);

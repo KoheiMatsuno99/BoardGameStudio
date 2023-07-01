@@ -1,8 +1,8 @@
 import React from "react";
-import styles from "./Board.module.css";
-import { ApiGateway } from "./BoardController";
-import { Table, Player, Piece, Block, BoardProps } from "./BoardState";
-import useBoardState from "./BoardState";
+import styles from "../styles/Board.module.css";
+import { ApiGateway } from "../BoardController";
+import { Table, Player, Piece, Block, BoardProps } from "../useState/BoardState";
+import useBoardState from "../useState/BoardState";
 import GameSetPopUp from "./GameSetPopUp";
 
 const InitialPieceDisplay: React.FC<{pieces: Piece[], player: Player, handlePieceClick: Function, isPlayer1: boolean}> = ({pieces, player, handlePieceClick, isPlayer1}) => (

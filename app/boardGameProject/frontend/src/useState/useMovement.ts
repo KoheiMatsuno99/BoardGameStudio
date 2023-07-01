@@ -1,5 +1,5 @@
 import {Player, Block, Piece } from "./BoardState";
-import { ApiGateway } from "./BoardController";
+import { ApiGateway } from "../BoardController";
 import useValidateMovement from "./useValidateMovement";
 
 const useMovement = (

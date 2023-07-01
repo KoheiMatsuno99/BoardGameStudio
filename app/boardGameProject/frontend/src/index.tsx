@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Lobby from './Lobby';
+import Lobby from './components/Lobby';
 import reportWebVitals from './reportWebVitals';
 import { PlayProvider } from './components/PlayContext';
 

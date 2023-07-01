@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import styles from "./GeisterRule.module.css";
+import styles from "../styles/GeisterRule.module.css";
 import Lobby from "./Lobby";
 import Board from "./Board";
-import { Table } from "./BoardState";
-import { ApiGateway } from "./BoardController";
-import { PlayContext } from "./components/PlayContext";
+import { Table } from "../useState/BoardState";
+import { ApiGateway } from "../BoardController";
+import { PlayContext } from "./PlayContext";
 
 interface GeisterRuleProps{
     playMode: string;
