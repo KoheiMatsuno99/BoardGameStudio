@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./Lobby.module.css";
 import GeisterRule from "./GeisterRule";
+import { PlayContext } from "./components/PlayContext";
 
 const Lobby: React.FC = () => {
     const [showGeisterRule, setGeisterRule] = React.useState<boolean>(false);
     const [playMode, setPlayMode] = React.useState<string>("");
+    const playContext = React.useContext(PlayContext);
+
+    useEffect(() => {
+        if (playContext && !(playContext.doesPlay)){
+            setGeisterRule(false);
+        }
+        }, [playContext])
     const handleClick = () => {
         setGeisterRule(true);
         setPlayMode("vscpu");

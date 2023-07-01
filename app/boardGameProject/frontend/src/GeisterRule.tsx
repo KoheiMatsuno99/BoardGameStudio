@@ -1,29 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./GeisterRule.module.css";
 import Lobby from "./Lobby";
 import Board from "./Board";
 import { Table } from "./BoardState";
 import { ApiGateway } from "./BoardController";
+import { PlayContext } from "./components/PlayContext";
 
 interface GeisterRuleProps{
     playMode: string;
 }
 const GeisterRule: React.FC<GeisterRuleProps> = (GeisterRuleProps) => {
     const [doesGoBack, setGoback] = React.useState(false);
-    const [doesPlay, setPlay] = React.useState(false);
+    //const [doesPlay, setPlay] = React.useState(false);
     const [initialTable, setInitialTable] = React.useState<Table | null>(null);
+    const playContext = React.useContext(PlayContext);
     const handleGoback = () => {
         setGoback(true);
     }
     const handlePlay = async () => {
         const initialData = await ApiGateway.initializeGame("you", "cpu");
         setInitialTable(initialData);
-        setPlay(true);
+        //setPlay(true);
+        if (playContext){
+            playContext.setDoesPlay(true);
+        }
     }
     if (doesGoBack) {
         return <Lobby />
     }
-    if (doesPlay) {
+    if (playContext && playContext.doesPlay) {
         if(initialTable === null){
             throw new Error("initialTable is null"); 
         }

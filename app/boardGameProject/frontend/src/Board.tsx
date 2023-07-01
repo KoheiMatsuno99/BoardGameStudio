@@ -107,7 +107,7 @@ const Board: React.FC<BoardProps> = ({initialData, playMode}) => {
                 {/*<PickedPiecesArea pieces={playerPickedPieces[0]} player={initialData.players[0]}/>*/}
             </div>
 
-            {isGameOver && <GameSetPopUp winner={winner} />}
+            {isGameOver && <GameSetPopUp winner={winner}/>}
         </div>
     )
 }

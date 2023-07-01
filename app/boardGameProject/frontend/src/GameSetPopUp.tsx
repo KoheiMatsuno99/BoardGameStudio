@@ -1,18 +1,23 @@
 import React from "react";
 import Lobby from "./Lobby";
 import styles from "./GameSetPopUp.module.css";
+import { PlayContext } from "./components/PlayContext";
 
 interface GameSetPopUpProps {
     winner: string;
-    //onGameEnd: () => void;
 }
 
 const GameSetPopUp: React.FC<GameSetPopUpProps> = (GameSetPopUpProps) => {
     const [doesEndGame, setEndGame] = React.useState(false);
+    const playContext = React.useContext(PlayContext);
+
     const handleEndGame = () => {
         setEndGame(true);
+        if (playContext){
+            playContext.setDoesPlay(false);
+        }
     }
-    if (doesEndGame){
+    if (doesEndGame && playContext && !(playContext.doesPlay)){
         return <Lobby />
     }
     return (
