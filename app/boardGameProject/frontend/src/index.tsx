@@ -1,15 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import Board from './Board';
+import Lobby from './components/Lobby';
 import reportWebVitals from './reportWebVitals';
+import { PlayProvider } from './components/PlayContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <Board />
+    <PlayProvider>
+      <Lobby />
+    </PlayProvider>
   </React.StrictMode>
 );
 
