@@ -67,4 +67,4 @@ jobs:
         environment_name: BoardGameStudio-env
         version_label: ${{ github.run_number }}
         region: ap-northeast-1
-        deployment_package: deployment.zip
+        deployment_package: ../deployment.zip
