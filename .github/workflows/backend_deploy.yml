@@ -40,7 +40,9 @@ jobs:
         python-version: 3.11
     
     - name: Generate deployment package
-      run:  zip -r ../deployment.zip . -x '*.git*'
+      run:  |
+        cd app/boardGameProject/backend/
+        zip -r ../../../../deployment.zip .
 
     - name: Get timestamp
       uses: gerred/actions/current-time@master
@@ -61,7 +63,7 @@ jobs:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         application_name: BoardGameStudio
-        environment_name: prod
+        environment_name: BoardGameStudio-env
         version_label: ${{ github.run_number }}
         region: ap-northeast-1
-        deployment_package: ../deployment.zip
+        deployment_package: ../../../../deployment.zip
