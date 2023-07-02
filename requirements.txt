@@ -1,4 +1,4 @@
-django==4.2.1 
+django==3.2.8 
 djangorestframework==3.14.0
 django-cors-headers==4.0.0
 black==23.3.0
