@@ -47,7 +47,7 @@ jobs:
     
     - name: Generate deployment package
       run:  |
-        cd boardGameProject/backend/
+        cd app/boardGameProject/backend/
         zip -r deployment.zip .
         mv deployment.zip ../../../../
 
