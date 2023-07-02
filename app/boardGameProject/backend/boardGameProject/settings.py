@@ -2,7 +2,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-load_dotenv('.env.prod')
+load_dotenv(".env.prod")
 env_path = f".env.{os.getenv('DJANGO_ENV', 'prod')}"
 load_dotenv(env_path)
 
@@ -19,7 +19,10 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["board-game-studio-bc4k-q77h0q2c2-amnis333.vercel.app/", ]
+ALLOWED_HOSTS = [
+    "board-game-studio-bc4k-q77h0q2c2-amnis333.vercel.app/",
+    "BoardGameStudio.ap-northeast-1.elasticbeanstalk.com ",
+]
 
 # Application definition
 
@@ -134,7 +137,7 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 SESSION_COOKIE_HTTPONLY = True  # JavaScriptからセッションクッキーにアクセス可能にするため
-SESSION_COOKIE_SAMESITE = 'None'  # クロスサイトリクエストにセッションクッキーを含めるため
+SESSION_COOKIE_SAMESITE = "None"  # クロスサイトリクエストにセッションクッキーを含めるため
 SESSION_COOKIE_SECURE = True  # httpsのときだけクッキーを送信する場合はTrueにする。
 SESSION_SAVE_EVERY_REQUEST = True  # すべてのリクエストでセッション情報を保存する
 CORS_ALLOW_CREDENTIALS = True
