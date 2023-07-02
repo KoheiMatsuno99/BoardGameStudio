@@ -64,4 +64,4 @@ jobs:
         environment_name: prod
         version_label: ${{ github.run_number }}
         region: ap-northeast-1
-        deployment_package: path/to/deployment.zip
+        deployment_package: ../deployment.zip
