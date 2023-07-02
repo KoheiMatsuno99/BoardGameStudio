@@ -33,28 +33,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ["3.9", "3.10", "3.11"]
+    
     - name: Install dependencies
       run: |
         cd app/
         python -m pip install --upgrade pip 
         pip install -r ../requirements.txt
-        pip freeze
-    
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.11
-    
+  
     - name: Generate deployment package
       run:  |
         cd app/boardGameProject/backend/
         zip -r deployment.zip .
         mv deployment.zip ../../../../
-
-    - name: Get timestamp
-      uses: gerred/actions/current-time@master
-      id: current-time
 
     - name: Run string replace
       uses: frabert/replace-string-action@master

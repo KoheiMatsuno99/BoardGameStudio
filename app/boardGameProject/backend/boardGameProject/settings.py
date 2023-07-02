@@ -133,7 +133,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = [
-    "https://board-game-studio-bc4k-q77h0q2c2-amnis333.vercel.app/"
+    "https://board-game-studio-bc4k-q77h0q2c2-amnis333.vercel.app"
 ]
 
 SESSION_COOKIE_HTTPONLY = True  # JavaScriptからセッションクッキーにアクセス可能にするため
