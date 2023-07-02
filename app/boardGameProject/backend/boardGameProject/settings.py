@@ -2,8 +2,8 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-load_dotenv(".env.prod")
-env_path = f".env.{os.getenv('DJANGO_ENV', 'prod')}"
+load_dotenv(".env.dev")
+env_path = f".env.{os.getenv('DJANGO_ENV', 'dev')}"
 load_dotenv(env_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -17,12 +17,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    "board-game-studio-bc4k-q77h0q2c2-amnis333.vercel.app/",
-    "BoardGameStudio.ap-northeast-1.elasticbeanstalk.com ",
-]
+ALLOWED_HOSTS = ["localhost"]
 
 # Application definition
 
@@ -132,12 +129,14 @@ REST_FRAMEWORK = {
     ],
 }
 
-CORS_ORIGIN_WHITELIST = [
-    "https://board-game-studio-bc4k-q77h0q2c2-amnis333.vercel.app/"
-]
+# CORS_ORIGIN_WHITELIST = [
+#     "http://localhost:3000"
+# ]
 
-SESSION_COOKIE_HTTPONLY = True  # JavaScriptからセッションクッキーにアクセス可能にするため
-SESSION_COOKIE_SAMESITE = "None"  # クロスサイトリクエストにセッションクッキーを含めるため
-SESSION_COOKIE_SECURE = True  # httpsのときだけクッキーを送信する場合はTrueにする。
+# 開発環境のみの設定　本番環境では削除すること
+SESSION_COOKIE_HTTPONLY = False  # JavaScriptからセッションクッキーにアクセス可能にするため
+SESSION_COOKIE_SAMESITE = 'Lax'  # クロスサイトリクエストにセッションクッキーを含めるため
+SESSION_COOKIE_SECURE = False  # httpsのときだけクッキーを送信する場合はTrueにする。開発環境ではFalseで良い
 SESSION_SAVE_EVERY_REQUEST = True  # すべてのリクエストでセッション情報を保存する
 CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
