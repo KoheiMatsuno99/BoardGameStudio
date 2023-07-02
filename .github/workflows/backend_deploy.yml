@@ -42,7 +42,8 @@ jobs:
     - name: Generate deployment package
       run:  |
         cd app/boardGameProject/backend/
-        zip -r ../../../../deployment.zip .
+        zip -r deployment.zip .
+        mv deployment.zip ../../../../
 
     - name: Get timestamp
       uses: gerred/actions/current-time@master
@@ -66,4 +67,4 @@ jobs:
         environment_name: BoardGameStudio-env
         version_label: ${{ github.run_number }}
         region: ap-northeast-1
-        deployment_package: ../../../../deployment.zip
+        deployment_package: deployment.zip
