@@ -63,5 +63,5 @@ jobs:
         application_name: BoardGameStudio
         environment_name: prod
         version_label: ${{ github.run_number }}
-        region: tokyo
+        region: ap-northeast-1
         deployment_package: path/to/deployment.zip
