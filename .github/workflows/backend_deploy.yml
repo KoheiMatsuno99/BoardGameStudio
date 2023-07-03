@@ -50,7 +50,7 @@ jobs:
       run:  |
         cd app/boardGameProject/backend/
         zip -r deployment.zip .
-        mv deployment.zip ../../../../
+        mv deployment.zip ../../../
 
     - name: Deploy to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v14
