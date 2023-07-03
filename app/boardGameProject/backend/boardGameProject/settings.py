@@ -20,7 +20,7 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "board-game-studio-bc4k-q77h0q2c2-amnis333.vercel.app/",
+    "https://board-game-studio.vercel.app",
     "BoardGameStudio.ap-northeast-1.elasticbeanstalk.com ",
 ]
 
@@ -133,7 +133,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = [
-    "https://board-game-studio-bc4k-q77h0q2c2-amnis333.vercel.app"
+    "https://board-game-studio.vercel.app"
 ]
 
 SESSION_COOKIE_HTTPONLY = True  # JavaScriptからセッションクッキーにアクセス可能にするため
