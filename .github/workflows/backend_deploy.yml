@@ -49,9 +49,10 @@ jobs:
   
     - name: Generate deployment package
       run:  |
-        cd app/boardGameProject/backend/
-        zip -r deployment.zip .
-        mv deployment.zip ../../../
+        cd app/
+        zip -r deployment.zip . -x *boardGameProject/frontend*
+        mv deployment.zip ../
+
 
     - name: Deploy to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v14
