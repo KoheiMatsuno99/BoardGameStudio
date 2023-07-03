@@ -20,6 +20,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
+          source app/bin/activate
           python -m pip install --upgrade pip 
           pip install -r requirements.txt
       - name: Lint
@@ -36,10 +37,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Set up Python 3.11
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
-        python-version: 3.11
+        python-version: 3.9
     
     - name: Install dependencies
       run: |
@@ -51,15 +52,6 @@ jobs:
         cd app/boardGameProject/backend/
         zip -r deployment.zip .
         mv deployment.zip ../../../
-
-    - name: Run string replace
-      uses: frabert/replace-string-action@master
-      id: format-time
-      with:
-        pattern: '[:\.]+'
-        string: "${{ steps.current-time.outputs.time }}"
-        replace-with: "-"
-        flags: "g"
 
     - name: Deploy to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v14
