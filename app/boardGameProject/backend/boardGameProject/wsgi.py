@@ -8,11 +8,8 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
 """
 
 import os
-import sys
 
 from django.core.wsgi import get_wsgi_application
 
-sys.path.append('home/ubuntu/backend/boardGameProject')
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.boardGameProject.backend.boardGameProject.settings")
-
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "boardGameProject.settings")
 application = get_wsgi_application()
