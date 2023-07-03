@@ -45,7 +45,7 @@ jobs:
       run: |
         cd app/boardGameProject/backend/
         python -m pip install --upgrade pip 
-        pip install -r requirements.txt
+        pip install -r ../../../requirements.txt
   
     - name: Generate deployment package
       run:  |
