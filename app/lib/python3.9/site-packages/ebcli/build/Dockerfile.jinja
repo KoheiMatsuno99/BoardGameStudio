@@ -1,0 +1,35 @@
+FROM {{ image }}
+
+LABEL com.elasticbox.id="{{ box }}"
+
+ENV ELASTICBOX_URL              {{ url | default('https://cam.ctl.io') }}
+ENV ELASTICBOX_PATH             {{ path | default('/opt/ebx') }}
+ENV ELASTICBOX_INSTANCE_PATH    /var/elasticbox
+
+WORKDIR ${ELASTICBOX_PATH}
+
+# Install ElasticBox bootstrap
+ADD {{ url }}/docker /eb-docker.sh
+RUN chmod +x /eb-docker.sh && /eb-docker.sh
+
+# Create Boxes directory
+RUN mkdir -p ${ELASTICBOX_PATH}/boxes
+
+# Add Boxes
+{% for box in boxes %}
+ADD [ "{{ boxes_path }}/{{ box }}", "${ELASTICBOX_PATH}/boxes/{{ box }}" ]
+{% endfor %}
+
+{% if ports | length %}
+EXPOSE {{ ' '.join(ports) }}
+{% endif %}
+
+# Setup the start box
+RUN elasticbox setup '{{ box }}'
+
+# Execute install scripts
+{% for script in scripts %}
+RUN elasticbox config --input='boxes/{{ script.path }}' {%if script.scope %}--scope='{{ script.scope }}' {% endif %}| bash
+{% endfor %}
+
+CMD elasticbox run

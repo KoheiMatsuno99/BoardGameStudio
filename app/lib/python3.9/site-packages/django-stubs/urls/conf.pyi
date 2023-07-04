@@ -1,0 +1,39 @@
+from collections.abc import Callable, Sequence
+from types import ModuleType
+from typing import Any, overload
+
+from django.urls import URLPattern, URLResolver, _AnyURL
+from typing_extensions import TypeAlias
+
+from ..conf.urls import IncludedURLConf
+from ..http.response import HttpResponseBase
+
+_URLConf: TypeAlias = str | ModuleType | Sequence[_AnyURL]
+
+def include(
+    arg: _URLConf | tuple[_URLConf, str], namespace: str | None = ...
+) -> tuple[Sequence[URLResolver | URLPattern], str | None, str | None]: ...
+
+# path()
+@overload
+def path(
+    route: str, view: Callable[..., HttpResponseBase], kwargs: dict[str, Any] = ..., name: str = ...
+) -> URLPattern: ...
+@overload
+def path(route: str, view: IncludedURLConf, kwargs: dict[str, Any] = ..., name: str = ...) -> URLResolver: ...
+@overload
+def path(
+    route: str, view: Sequence[URLResolver | str], kwargs: dict[str, Any] = ..., name: str = ...
+) -> URLResolver: ...
+
+# re_path()
+@overload
+def re_path(
+    route: str, view: Callable[..., HttpResponseBase], kwargs: dict[str, Any] = ..., name: str = ...
+) -> URLPattern: ...
+@overload
+def re_path(route: str, view: IncludedURLConf, kwargs: dict[str, Any] = ..., name: str = ...) -> URLResolver: ...
+@overload
+def re_path(
+    route: str, view: Sequence[URLResolver | str], kwargs: dict[str, Any] = ..., name: str = ...
+) -> URLResolver: ...
