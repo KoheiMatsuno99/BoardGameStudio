@@ -16,7 +16,7 @@ export class ApiGateway {
     ];
     //todo リクエスト先をlocalhostから変更する
     const response = await axios.post(
-      "http://localhost:8000/start/",
+      "django-env1.eba-tr3jfjut.ap-northeast-1.elasticbeanstalk.com/start/",
       playerData,
       { withCredentials: true }
     );
@@ -32,7 +32,7 @@ export class ApiGateway {
   public static async notifyGetReady(tableInfo: Table): Promise<Table> {
     //全てのコマの初期位置が確定したらコマの位置情報をサーバーに送信する
     const response = await axios.post(
-      "http://localhost:8000/setup/",
+      "django-env1.eba-tr3jfjut.ap-northeast-1.elasticbeanstalk.com/setup/",
       tableInfo,
       { withCredentials: true }
     );
@@ -57,7 +57,7 @@ export class ApiGateway {
       destination: destination,
     };
     const response = await axios.post(
-      "http://localhost:8000/movement/",
+      "django-env1.eba-tr3jfjut.ap-northeast-1.elasticbeanstalk.com/movement/",
       movementInfo,
       { withCredentials: true }
     );
@@ -68,7 +68,7 @@ export class ApiGateway {
   }
   public static async cpuMovePiece(): Promise<Table> {
     const response = await axios.post(
-      "http://localhost:8000/cpu-movement/",
+      "django-env1.eba-tr3jfjut.ap-northeast-1.elasticbeanstalk.com/cpu-movement/",
       {},
       { withCredentials: true }
     );
