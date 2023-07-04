@@ -19,6 +19,7 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+
 ALLOWED_HOSTS = [
     "https://board-game-studio.vercel.app",
     "django-env1.eba-tr3jfjut.ap-northeast-1.elasticbeanstalk.com",
@@ -137,7 +138,7 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 SESSION_COOKIE_HTTPONLY = True  # JavaScriptからセッションクッキーにアクセス可能にするため
-SESSION_COOKIE_SAMESITE = "None"  # クロスサイトリクエストにセッションクッキーを含めるため
-SESSION_COOKIE_SECURE = True  # httpsのときだけクッキーを送信する場合はTrueにする。
+SESSION_COOKIE_SAMESITE = 'None'  # クロスサイトリクエストにセッションクッキーを含めるため
+SESSION_COOKIE_SECURE = True  # httpsのときだけクッキーを送信する場合はTrueにする。開発環境ではFalseで良い
 SESSION_SAVE_EVERY_REQUEST = True  # すべてのリクエストでセッション情報を保存する
 CORS_ALLOW_CREDENTIALS = True

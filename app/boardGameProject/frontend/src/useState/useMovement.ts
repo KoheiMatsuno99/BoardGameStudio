@@ -61,7 +61,6 @@ const useMovement = (
       }))
     );
     // 相手のコマを取る
-    // todo イベントの判定をコマからマスにする（今の状態ではコマの画像にあたるため、イベントが発火しない）
     if (block.piece?.owner && block.piece.owner !== selectedPiece.owner) {
       /*
             todo 取ったコマは自分のコマ置き場に移動（コマは再利用できないことに注意）

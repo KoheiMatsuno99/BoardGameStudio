@@ -127,6 +127,7 @@ const useBoardState = (initialData: Table, playMode: string) => {
     setIsGameOver,
     winner,
     setWinner,
+    playerPickedPieces
   };
 };
 
