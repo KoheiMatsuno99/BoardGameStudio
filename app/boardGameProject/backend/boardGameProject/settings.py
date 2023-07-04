@@ -7,7 +7,7 @@ env_path = f".env.{os.getenv('DJANGO_ENV', 'prod')}"
 load_dotenv(env_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -19,7 +19,11 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["https://board-game-studio.vercel.app"]
+
+ALLOWED_HOSTS = [
+    "https://board-game-studio.vercel.app",
+    "django-env1.eba-tr3jfjut.ap-northeast-1.elasticbeanstalk.com",
+]
 
 # Application definition
 
