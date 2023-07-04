@@ -52,6 +52,11 @@ jobs:
         zip -r deployment.zip . -x *boardGameProject/frontend*
         mv deployment.zip ../
 
+    - name: Debug path
+      run: |
+        pwd
+        which python
+        which gunicorn
 
     - name: Deploy to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v14
