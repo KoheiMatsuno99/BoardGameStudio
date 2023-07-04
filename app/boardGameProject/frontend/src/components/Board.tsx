@@ -120,6 +120,7 @@ const Board: React.FC<BoardProps> = ({ initialData, playMode}) => {
         setPlayers(res.players);
         setBoardInfo(res.table);
         setIsGameStarted(true);
+        alert(`ゲームスタート！${players[0].name}のターンです}`);
       });
     }
   });
