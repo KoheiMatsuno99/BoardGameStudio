@@ -1,3 +1,0 @@
-from typing import Any
-
-def pagination_system_check(app_configs: Any, **kwargs: Any) -> list[Any]: ...
