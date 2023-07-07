@@ -7,7 +7,7 @@
 ## Preparation
 - ガイスターには青いオバケと赤いオバケの二つのコマがあります。
 - 各プレイヤーは、青いオバケと赤いオバケのコマをそれぞれ4つずつ持っています。
-- 各プレイヤーは手前の8マスに8つの自分のコマを自由に配置します。
+- 各プレイヤーは手前の14マスに8つの自分のコマを自由に配置します。
 - 各プレイヤーは自分のコマが青いオバケと赤いオバケかは見えますが、相手のコマが青いオバケか赤いオバケかは見えません。
 
 ## Game
@@ -40,21 +40,16 @@
 # Technology Stack
 使用技術は以下の通り
 - Frontend
-    - Language/Framework 
-        - TypeScript
-        - React
+    - TypeScript
+    - React
 - Backend
-    - Language/Framework  
-        - Python
-        - Django
-    - Test
-        - pytest
-    - Linter/Formatter
-        - Flake8
-        - Black
-        - mypy
+    - Python
+    - Django
 - CI/CD
     - GitHub Actions
+- Deploy
+    - Vercel
+    - Elastic Beanstalk    
 
 
 ## Why are these technology ?
@@ -64,10 +59,12 @@ TypeScriptを差し置いてあえてJavaScriptで開発する理由がないた
 
 ### Backend
 今回開発するアプリは、高負荷なアクセスは想定されず、ターン制のボードゲームのため信頼性やレイテンシーを厳格に意識する必要性は薄い。
-そのため、GolangやJavaなどでは長所を活かしきれず、バックエンドをスピーディーに開発できる動的型付け言語の方が適していると判断した。
+そのため、GolangやJavaなどでは長所を活かしきれず、バックエンドを短いコードで高速に開発できる動的型付け言語の方が適していると判断した。
 バックエンドにNodeJSを採用しなかったのはフロントエンドとバックエンドの責務を明確に分離することを意識したかったため。
 PHPやRubyを採用しなかったのはPythonの方が馴染みがあり好みの言語のため。
-Djangoを選定したのはPythonの中では最もメジャーなフレームワークのため。
+Pythonの弱点である弱い型付けについては、型ヒントやmypyを使用することで型安全性の改善と高速な開発を両立した。
+Djangoを選定したのはPythonの中では最もメジャーなフレームワークであり、REST APIを開発する上で便利なDjango Rest Frameworkを提供しているから。
+
 
 ### CI/CD
 ソースコードをGitHubで管理しているため、GitHubとの相性が良いGitHub Actionsを採用。
@@ -83,4 +80,4 @@ ControllerとしてクライアントサイドはTypeScript、サーバーサイ
 ModelはPythonで実装した。
 
 ## Activity Diagram
-![image](https://user-images.githubusercontent.com/83019007/235469551-2ba459c8-00cc-4ece-8591-fe4b082ab525.png)
+![image](https://github.com/Amnis333/BoardGameStudio/assets/83019007/cae52556-86fe-43f0-8087-734b4641b61f)
