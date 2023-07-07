@@ -81,3 +81,7 @@ ModelはPythonで実装した。
 
 ## Activity Diagram
 ![image](https://github.com/Amnis333/BoardGameStudio/assets/83019007/cae52556-86fe-43f0-8087-734b4641b61f)
+
+## Class Design
+![image](https://github.com/Amnis333/BoardGameStudio/assets/83019007/c3bbcc16-86e4-4b04-af1a-be7ce20f56f9)
+
