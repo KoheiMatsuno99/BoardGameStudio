@@ -63,7 +63,7 @@ TypeScriptを差し置いてあえてJavaScriptで開発する理由がないた
 バックエンドにNodeJSを採用しなかったのはフロントエンドとバックエンドの責務を明確に分離することを意識したかったため。
 PHPやRubyを採用しなかったのはPythonの方が馴染みがあり好みの言語のため。
 Pythonの弱点である弱い型付けについては、型ヒントやmypyを使用することで型安全性の改善と高速な開発を両立した。
-Djangoを選定したのはPythonの中では最もメジャーなフレームワークであり、REST APIを開発する上で便利なDjango Rest Frameworkを提供しているから。
+また、Pythonの中では最もメジャーなフレームワークであり、REST APIを開発する上で便利かつ枯れた技術であるDjango Rest Frameworkを提供しているため、Djangoを選定した。
 
 
 ### CI/CD
