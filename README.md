@@ -2,6 +2,8 @@
 ガイスターというボードゲームを開発します。
 ガイスターは1対1で対戦するボードゲームです。
 
+アプリケーションURL：https://board-game-studio.vercel.app/
+
 # Rules
 
 ## Preparation
