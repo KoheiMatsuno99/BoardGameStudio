@@ -41,11 +41,11 @@ https://github.com/Amnis333/BoardGameStudio/assets/83019007/7eb81900-0217-4ce0-9
 # Technology Stack
 使用技術は以下の通り
 - Frontend
-    - TypeScript
-    - React
+    - TypeScript 4.9.5
+    - React　18.2.0
 - Backend
-    - Python
-    - Django
+    - Python 3.9.6
+    - Django 4.2.1
 - CI/CD
     - GitHub Actions
 - Deploy
