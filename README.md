@@ -86,7 +86,7 @@ Pythonの弱点である弱い型付けについては、型ヒントやmypyを�
 ## Activity Diagram
 ![image](https://github.com/Amnis333/BoardGameStudio/assets/83019007/cae52556-86fe-43f0-8087-734b4641b61f)
 
-## Class Design
+## Class Diagram
 ![image](https://github.com/Amnis333/BoardGameStudio/assets/83019007/3bad1098-bd9c-4057-9e33-640a32ff900f)
 
 
