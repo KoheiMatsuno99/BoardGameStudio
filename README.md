@@ -4,6 +4,11 @@
 
 アプリケーションURL：https://board-game-studio.vercel.app/
 
+![geister](https://github.com/Amnis333/BoardGameStudio/assets/83019007/4f244242-111b-4103-a9e4-75cc216aa83c)
+
+https://github.com/Amnis333/BoardGameStudio/assets/83019007/13cf7b1a-8a1b-40b6-817a-f70fd78a112a
+
+
 # Rules
 
 ## Preparation
