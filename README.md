@@ -67,7 +67,7 @@ Pythonの弱点である弱い型付けについては、型ヒントやmypyを�
 アプリ全体の構成としては画面の描画を行うプレゼンテーション層・ゲームのロジックを処理するドメイン層・ゲームの状態管理を行うデータ層の3層アーキテクチャに基づいている。
 フロントエンドとバックエンドの責務の分離、フロントエンド・バックエンド内でもそれぞれの責務の分離を意識した。
 
-![image](https://github.com/Amnis333/BoardGameStudio/assets/83019007/3b069fdb-d9b7-4635-87a1-58bf2d0a7641)
+![image](https://github.com/Amnis333/BoardGameStudio/assets/83019007/528b6765-f9a3-477f-b69c-8aee42e2e29e)
 
 
 ## Activity Diagram
