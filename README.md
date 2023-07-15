@@ -4,6 +4,7 @@
 
 アプリケーションURL：https://board-game-studio.vercel.app/
 
+作成期間：2ヶ月
 
 
 https://github.com/Amnis333/BoardGameStudio/assets/83019007/7eb81900-0217-4ce0-95d0-ee04d0c6d31d
