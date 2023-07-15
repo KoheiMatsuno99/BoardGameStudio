@@ -87,7 +87,7 @@ Reactを選定した理由はアプリを開発した2023年時点で最もメ�
 ## Architecture
 
 ３層アーキテクチャ・MVCを採用
-アプリ全体の構成としては画面の描画を行うプレゼンテーション層・ゲームのロジックを処理するドメイン層・ゲームの状態管理を行うデータ層の3層アーキテクチャに基づいている。
+アプリ全体の構成としてはMVCアーキテクチャに準拠している。Reactがフロントエンドの描画（View）、TypeScriptとDjangoがAPIの通信（Controller）、Python・DRF・DBがロジックの処理（Model）を担当している。
 フロントエンドとバックエンドの責務の分離、フロントエンド・バックエンド内でもそれぞれの責務の分離を意識した。
 
 ![image](https://github.com/Amnis333/BoardGameStudio/assets/83019007/ff2ebeba-8d6b-4828-9b24-7259b1dabe0b)
