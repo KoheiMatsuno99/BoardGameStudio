@@ -41,7 +41,7 @@ https://github.com/Amnis333/BoardGameStudio/assets/83019007/7eb81900-0217-4ce0-9
     - Elastic Beanstalk    
 
 
-## Why are these technology ?
+## Why these technology ?
 
 ### Frontend
 
