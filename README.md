@@ -86,8 +86,7 @@ Reactを選定した理由はアプリを開発した2023年時点で最もメ�
 
 ## Architecture
 
-アプリ全体の構成としてはMVCアーキテクチャに準拠している。Reactがフロントエンドの描画（View）、TypeScriptとDjangoがAPIの通信（Controller）、Pythonがロジック（Model）を担当している。
-フロントエンドとバックエンドの責務の分離、フロントエンド・バックエンド内でもそれぞれの責務の分離を意識した。
+アプリ全体の構成としては3層アーキテクチャに準拠している。プレゼンテーション層はReactによる画面の描画・イベントの処理およびTypeScriptによるAPIのクライアントサイドの実装が含まれている。そして、アプリケーション層にはDjangoによるAPIのサーバーサイドの実装およびゲームのロジックが含まれている。そして、データ層ではDjangoがMySQLと通信し、データの読み書きを行うようにしている。
 
 ![image](https://github.com/Amnis333/BoardGameStudio/assets/83019007/ff2ebeba-8d6b-4828-9b24-7259b1dabe0b)
 
