@@ -22,9 +22,8 @@ https://github.com/Amnis333/BoardGameStudio/assets/83019007/7eb81900-0217-4ce0-9
 # Functional requirements
 - 上記のルールに従い、CPUとの対戦モードを実装すること
 - ゲームのルールを説明する画面を用意すること
-- Webアプリケーションのため、主要なブラウザ（Google Chrome, Microsoft Edge, Firefox, Safari等）で動作できること
-- CPUの挙動はゲームに勝利するためのロジックをもとに動作すること
-- 
+- 主要なブラウザ（Google Chrome, Microsoft Edge, Firefox, Safari等）で動作できること
+- CPUの強さは複数用意し、それぞれの対戦モードで遊べること
 
 
 # Non-functional requirements
